@@ -6,3 +6,15 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+/.idea/.gitignore
+/.idea/libraries/Base58Swift_framework.xml
+/.idea/libraries/Base58Swift_framework2.xml
+/.idea/conventionalCommit.xml
+/.idea/dbnavigator.xml
+/.idea/git_toolbox_prj.xml
+/.idea/material_theme_project_new.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/swift-cardano-core.iml
+/.idea/vcs.xml
