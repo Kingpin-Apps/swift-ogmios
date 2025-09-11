@@ -8,28 +8,6 @@ let mockEpoch = """
 }
 """.data(using: .utf8)!
 
-let mockLiveStakeDistribution = """
-{
-  "jsonrpc" : "2.0",
-  "method" : "queryLedgerState/liveStakeDistribution",
-  "id" : "test123",
-  "result" : {
-    "pool104teu8tjj33a3lqct3f7ac9hl6e8d9muc548k3vvavadvk6s3pc" : {
-      "stake" : "2497472301/36061816661970035",
-      "vrf" : "44b93933fc9cba358fdc9bab0f9b5762ecf31c5a32fcdfad63ea2ff9bc385f07"
-    },
-    "pool1057njzaaz280688ppewa3df4qshspvh98njh5n4lq4cg7ntcsyj" : {
-      "stake" : "2504340370/7212363332394007",
-      "vrf" : "a63ae2342ab8c541978c1f12f0a2338b78b1486c9c6fcdc5d516df4f08bbd93f"
-    },
-    "pool105wx68zqse6v4wyx09nkqhxhmf7e0zj349pclyqsjqch7953j0x" : {
-      "stake" : "8448765625/7212363332394007",
-      "vrf" : "7b0cb25a2a5abf1a97523355002a173cd9ff4b2108b7ace2b4693ee406b06eef"
-    }
-  }
-}
-""".data(using: .utf8)!
-
 let mockConstitution = """
 {
   "id" : "AbNq3",
@@ -243,6 +221,42 @@ let mockGovernanceProposals = """
     }
   ],
   "method" : "queryLedgerState/governanceProposals"
+}
+""".data(using: .utf8)!
+
+let mockLiveStakeDistribution = """
+{
+  "jsonrpc" : "2.0",
+  "method" : "queryLedgerState/liveStakeDistribution",
+  "id" : "test123",
+  "result" : {
+    "pool104teu8tjj33a3lqct3f7ac9hl6e8d9muc548k3vvavadvk6s3pc" : {
+      "stake" : "2497472301/36061816661970035",
+      "vrf" : "44b93933fc9cba358fdc9bab0f9b5762ecf31c5a32fcdfad63ea2ff9bc385f07"
+    },
+    "pool1057njzaaz280688ppewa3df4qshspvh98njh5n4lq4cg7ntcsyj" : {
+      "stake" : "2504340370/7212363332394007",
+      "vrf" : "a63ae2342ab8c541978c1f12f0a2338b78b1486c9c6fcdc5d516df4f08bbd93f"
+    },
+    "pool105wx68zqse6v4wyx09nkqhxhmf7e0zj349pclyqsjqch7953j0x" : {
+      "stake" : "8448765625/7212363332394007",
+      "vrf" : "7b0cb25a2a5abf1a97523355002a173cd9ff4b2108b7ace2b4693ee406b06eef"
+    }
+  }
+}
+""".data(using: .utf8)!
+
+let nonces = """
+{
+  "jsonrpc" : "2.0",
+  "method" : "queryLedgerState/nonces",
+  "result" : {
+    "evolvingNonce" : "72714536007d2def6a7a1b79bd17592543f3efb90e9aa13141112c32eb4b9212",
+    "candidateNonce" : "3eb915da53048a87e778fae56b7dc2994f4fe7613b3b6d3f6763c901ed7eb997",
+    "lastEpochLastAncestor" : "ea11b55edb98434c073243df5abdb9040a95239736a644daeac75b3ba1b6097b",
+    "epochNonce" : "eda75fda2a45f816e76413a04d2dc207c214b88d8141b8d3003767d6b3913b97"
+  },
+  "id" : "GB3ng"
 }
 """.data(using: .utf8)!
 

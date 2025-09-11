@@ -213,6 +213,10 @@ extension OgmiosClient {
             return QueryLedgerStateLiveStakeDistribution(client: self.client)
         }
         
+        public var nonces: QueryLedgerStateNonces {
+            return QueryLedgerStateNonces(client: self.client)
+        }
+        
         public var tip: QueryLedgerStateTip {
             return QueryLedgerStateTip(client: self.client)
         }

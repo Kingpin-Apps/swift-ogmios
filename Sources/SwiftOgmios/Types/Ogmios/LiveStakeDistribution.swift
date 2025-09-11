@@ -43,4 +43,4 @@ public struct LiveStakeDistribution: StringCallable {
 public struct LiveStakeDistributionPool: JSONSerializable, Equatable, Hashable, Sendable {
     public let stake: Ratio
     public let vrf: DigestBlake2b256
-    }
+}
