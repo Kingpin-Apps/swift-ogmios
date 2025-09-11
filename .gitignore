@@ -215,7 +215,7 @@ xcuserdata
 
 
 ### SwiftPM ###
-
+.swiftpm/
 
 ### VisualStudioCode ###
 .vscode/*
