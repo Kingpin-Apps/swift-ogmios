@@ -27,18 +27,19 @@ protocol JSONRPCTransportDelegate: AnyObject, Sendable {
     func transportDidEncounterError(_ error: Error)
 }
 
-// MARK: - Main JSON-RPC Client
+// MARK: - OgmiosClient
 
 public class OgmiosClient: @unchecked Sendable, Loggable {
     
     // MARK: - Properties
     
     private let transport: JSONRPCTransport
-    private let session: URLSession
-    private var webSocketConnection: WebSocketConnection?
-    private var pendingRequests: [JSONRPCId: CheckedContinuation<Data, Error>] = [:]
-    private let queue = DispatchQueue(label: "jsonrpc.client.queue", attributes: .concurrent)
-    private var requestIdCounter: Int = 0
+    private var session: URLSession {
+        return URLSession(configuration: self.configuration)
+    }
+    
+    private var httpConnection: (any HTTPConnectable)?
+    private var webSocketConnection: (any WebSocketConnectable)?
     
     weak var delegate: JSONRPCTransportDelegate?
     
@@ -48,7 +49,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     private let secure: Bool
     private let httpOnly: Bool
     private let rpcVersion: String
-    private let additionalHeaders: Dictionary<String, String>?
+    private let configuration: URLSessionConfiguration
     
     internal let logger: Logger
     
@@ -57,42 +58,43 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     }
     
     // MARK: - Initialization
-    convenience init(
+    init(
         host: String = "localhost",
         port: Int = 1337,
         path: String = "",
         secure: Bool = false,
         httpOnly: Bool = false,
         rpcVersion: String = "2.0",
-        additionalHeaders: Dictionary<String, String> = [:]
+        configuration: URLSessionConfiguration = .default,
+        httpConnection: (any HTTPConnectable)? = nil,
+        webSocketConnection: (any WebSocketConnectable)? = nil
     ) async throws{
-        let transport: JSONRPCTransport
-        if httpOnly {
-            transport = secure ? .https(URL(string: "https://\(host):\(port)/\(path)")!) : .http(URL(string: "http://\(host):\(port)/\(path)")!)
-        } else {
-            transport = secure ? .wss(URL(string: "wss://\(host):\(port)/\(path)")!) : .ws(URL(string: "ws://\(host):\(port)/\(path)")!)
-        }
-            
-        try await self.init(transport: transport, configuration: .default)
-    }
-
-    
-    init(transport: JSONRPCTransport, configuration: URLSessionConfiguration = .default) async throws {
-        self.transport = transport
-        self.session = URLSession(configuration: configuration)
+        self.host = host
+        self.port = port
+        self.path = path
+        self.secure = secure
+        self.httpOnly = httpOnly
+        self.rpcVersion = rpcVersion
         
-        self.host = transport.url.host!
-        self.port = transport.url.port ?? (transport.url.scheme == "https" || transport.url.scheme == "wss" ? 443 : 80)
-        self.path = transport.url.path
-        self.secure = (transport.url.scheme == "https" || transport.url.scheme == "wss")
-        self.httpOnly = (transport.url.scheme == "http" || transport.url.scheme == "https")
-        self.rpcVersion = "2.0"
-        self.additionalHeaders = configuration.httpAdditionalHeaders as? Dictionary<String, String>
+        if self.httpOnly {
+            self.transport = self.secure ?
+                .https(URL(string: "https://\(host):\(port)/\(path)")!) :
+                .http(URL(string: "http://\(host):\(port)/\(path)")!)
+        } else {
+            self.transport = self.secure ?
+                .wss(URL(string: "wss://\(host):\(port)/\(path)")!) :
+                .ws(URL(string: "ws://\(host):\(port)/\(path)")!)
+        }
+        
+        self.configuration = configuration
         
         self.logger = Logger(label: "com.swift-ogmios")
         setupLogging()
         
-        try await connect()
+        try await connect(
+            httpConnection: httpConnection,
+            webSocketConnection: webSocketConnection
+        )
     }
     
     deinit {
@@ -101,14 +103,17 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     
     // MARK: - Connection Management
     
-    func connect() async throws {
+    func connect(
+        httpConnection: (any HTTPConnectable)? = nil,
+        webSocketConnection: (any WebSocketConnectable)? = nil
+    ) async throws {
         switch transport {
-        case .ws(let url), .wss(let url):
-            try await connectWebSocket(url: url)
-        case .http(_), .https(_):
-            // HTTP/HTTPS don't require persistent connections
-            delegate?.transportDidConnect()
+            case .ws(let url), .wss(let url):
+                self.webSocketConnection = webSocketConnection ?? WebSocketConnection(url: url, session: session)
+            case .http(let url), .https(let url):
+                self.httpConnection = httpConnection ?? HTTPConnection(url: url, session: session)
         }
+        delegate?.transportDidConnect()
     }
     
     func disconnect() {
@@ -116,110 +121,25 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         webSocketConnection = nil
         delegate?.transportDidDisconnect()
     }
-    
-    private func connectWebSocket(url: URL) async throws {
-        let webSocketTask = session.webSocketTask(with: url)
-        webSocketConnection = WebSocketConnection(
-            webSocketTask: webSocketTask
-        )
         
-        delegate?.transportDidConnect()
-    }
-    
-    private func handleWebSocketResponse(_ data: Data) {
-        do {
-            let genericResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-            
-            if let id = genericResponse?["id"] as? Int {
-                queue.async(flags: .barrier) {
-                    if let continuation = self.pendingRequests.removeValue(
-                        forKey: JSONRPCId.number(id)
-                    ) {
-                        continuation.resume(returning: data)
-                    }
-                }
-            }
-        } catch {
-            delegate?.transportDidEncounterError(error)
-        }
-    }
-    
-    public func sendRequestData(_ request: any JSONRPCRequest) async throws -> Data {
-        let requestData = try JSONEncoder().encode(request)
-        
-        switch transport {
-            case .http(let url), .https(let url):
-                return try await sendHTTPRequest(data: requestData, url: url)
-            case .ws(_), .wss(_):
-                return try await sendWebSocketRequest(data: requestData, id: request.id)
-        }
-    }
-    
     public func sendRequestJSON(_ request: any JSONRPCRequest) async throws -> Data {
         let requestJSON = try request.toJSONString()
         
         switch transport {
-            case .http(let url), .https(let url):
-                return try await sendHTTPRequest(json: requestJSON, url: url)
+            case .http(_), .https(_):
+                guard let httpConnection = httpConnection else {
+                    throw OgmiosError.httpError("HTTPConnection not initiated")
+                }
+                return try await httpConnection.sendRequest(json: requestJSON)
             case .ws(_), .wss(_):
-                return try await sendWebSocketRequest(json: requestJSON, id: request.id)
-        }
-    }
-        
-    private func sendHTTPRequest(json: String, url: URL) async throws -> Data {
-        guard let jsonData = json.data(using: .utf8) else {
-            throw OgmiosError.invalidJSONError("Invalid JSON string: \(json)")
-        }
-        return try await self.sendHTTPRequest(data: jsonData, url: url)
-    }
-    
-    private func sendHTTPRequest(data: Data, url: URL) async throws -> Data {
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = data
-        
-        let (responseData, response) = try await session.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OgmiosError.invalidResponse("Invalid HTTP response: \(String(describing: response))")
-        }
-        
-        guard 200...299 ~= httpResponse.statusCode else {
-            throw OgmiosError.httpError("HTTP error: \(httpResponse)")
-        }
-        
-        return responseData
-    }
-    
-    private func sendWebSocketRequest(json: String, id: JSONRPCId?) async throws -> Data {
-        guard let webSocketConnection = webSocketConnection else {
-            throw OgmiosError.websocketError("WebSocket not connected")
-        }
-        
-        try await webSocketConnection.send(json)
-        
-        let responseString = try await webSocketConnection.receiveOnce()
-        return responseString.data(using: .utf8) ?? Data()
-    }
-    
-    
-    private func sendWebSocketRequest(data: Data, id: JSONRPCId?) async throws -> Data {
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            throw NSError(domain: "JSONEncodingError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to encode JSON to string"])
-        }
-        
-        return try await sendWebSocketRequest(json: jsonString, id: id)
-    }
-    
-    public func getNextRequestId() -> Int {
-        return queue.sync {
-            requestIdCounter += 1
-            return requestIdCounter
+                guard let webSocketConnection = webSocketConnection else {
+                    throw OgmiosError.websocketError("WebSocket not connected")
+                }
+                return try await webSocketConnection.sendRequest(json: requestJSON)
         }
     }
     
-    public func getServerHealth() async throws -> Health {
+    public func getServerHealth(httpConnection: (any HTTPConnectable)? = nil) async throws -> Health {
         let healthCheckURL: URL
         switch transport {
             case .http(let url), .https(let url):
@@ -230,10 +150,15 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
                 healthCheckURL = URL(string: url.absoluteString.replacingOccurrences(of: "wss", with: "https"))!.appendingPathComponent("health")
         }
         
-        var request = URLRequest(url: healthCheckURL)
-        request.httpMethod = "GET"
-        
-        let (responseData, _) = try await session.data(for: request)
+        let responseData: Data
+        if httpConnection == nil {
+            responseData = try await HTTPConnection(
+                url: healthCheckURL,
+                session: session
+            ).get(url: healthCheckURL)
+        } else {
+            responseData = try await httpConnection!.get(url: healthCheckURL)
+        }
         
         return try JSONDecoder().decode(Health.self, from: responseData)
     }
@@ -278,6 +203,14 @@ extension OgmiosClient {
         
         public var eraSummaries: QueryLedgerStateEraSummaries {
             return QueryLedgerStateEraSummaries(client: self.client)
+        }
+        
+        public var governanceProposals: QueryLedgerStateGovernanceProposals {
+            return QueryLedgerStateGovernanceProposals(client: self.client)
+        }
+        
+        public var liveStakeDistribution: QueryLedgerStateLiveStakeDistribution {
+            return QueryLedgerStateLiveStakeDistribution(client: self.client)
         }
         
         public var tip: QueryLedgerStateTip {

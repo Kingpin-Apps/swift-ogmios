@@ -23,6 +23,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
         public let metadata: Anchor?
         public let deposit: ValueAdaOnly?
         public let stake: ValueAdaOnly
+        public let delegators: [Delegators]
         
         public init(
             id: DigestBlake2b224,
@@ -32,6 +33,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
             metadata: Anchor? = nil,
             deposit: ValueAdaOnly? = nil,
             stake: ValueAdaOnly,
+            delegators: [Delegators],
         ) {
             guard type == "registered" else {
                 fatalError("Type must be 'registered'")
@@ -43,6 +45,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
             self.mandate = mandate
             self.metadata = metadata
             self.deposit = deposit
+            self.delegators = delegators
         }
     }
     

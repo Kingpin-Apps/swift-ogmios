@@ -4,6 +4,7 @@ import PotentCodables
 
 // MARK: - JSON-RPC Protocol Structures
 public protocol JSONSerializable: Codable, CustomDebugStringConvertible, CustomStringConvertible {}
+
 extension JSONSerializable {
     public static func fromJSONData(_ data: Data) throws -> Self {
         return try JSONDecoder().decode(Self.self, from: data)
@@ -104,4 +105,20 @@ public enum JSONRPCId: JSONSerializable, Hashable, Sendable {
             try container.encodeNil()
         }
     }
+    
+    /// Generate a new unique JSONRPCId using current timestamp in milliseconds
+    public static func generateNextNumber() -> JSONRPCId {
+        return .number(Int(Date().timeIntervalSince1970 * 1000))
+    }
+    
+    /// Generate a new unique JSONRPCId using UUID string
+    public static func generateNextUUID() -> JSONRPCId {
+        return .string(UUID().uuidString)
+    }
+    
+    /// Generate a new unique JSONRPCId using NanoID with specified size (default is 5)
+    public static func generateNextNanoId(size: Int = 5) -> JSONRPCId {
+        return .string(NanoID.new(size))
+    }
+        
 }

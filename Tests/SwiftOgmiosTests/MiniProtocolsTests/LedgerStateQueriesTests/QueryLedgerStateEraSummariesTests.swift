@@ -2,18 +2,33 @@ import Testing
 @testable import SwiftOgmios
 
 @Test func testQueryLedgerStateEraSummaries() async throws {
-    let httpClient = try await OgmiosClient(httpOnly: true) // Use `httpOnly: true` for HTTP
-    let wsClient = try await OgmiosClient(httpOnly: false) // Use `httpOnly: false` for WebSocket
+    let mockHTTPConnection = MockHTTPConnection()
+    let mockWebSocketConnection = MockWebSocketConnection()
     
-    let eraSummariesHTTP = try await httpClient.ledgerStateQuery.eraSummaries.execute(
-        id: .number(httpClient.getNextRequestId())
+    let httpClient = try await OgmiosClient(
+        httpOnly: true,
+        httpConnection: mockHTTPConnection
     )
-    let eraSummariesWS = try await wsClient.ledgerStateQuery.eraSummaries.execute(
-        id: .number(httpClient.getNextRequestId())
+    let wsClient = try await OgmiosClient(
+        httpOnly: false,
+        webSocketConnection: mockWebSocketConnection
     )
     
-    print("EraSummaries (HTTP): \(eraSummariesHTTP)")
-    print("EraSummaries (WS): \(eraSummariesWS)")
+    let eraSummariesHTTP = try await httpClient
+        .ledgerStateQuery
+        .eraSummaries
+        .execute(
+            id: JSONRPCId.generateNextNanoId()
+        )
+    let eraSummariesWS = try await wsClient
+        .ledgerStateQuery
+        .eraSummaries
+        .execute(
+            id: JSONRPCId.generateNextNanoId()
+        )
+    
+    #expect(eraSummariesHTTP.result.count == 1)
+    #expect(eraSummariesWS.result.count == 1)
 }
 
 

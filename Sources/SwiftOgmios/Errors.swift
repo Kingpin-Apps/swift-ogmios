@@ -1,6 +1,7 @@
 import Foundation
 
 enum OgmiosError: Error, CustomStringConvertible, Equatable {
+    case connectionError(String?)
     case decodingError(String?)
     case encodingError(String?)
     case httpError(String?)
@@ -14,6 +15,8 @@ enum OgmiosError: Error, CustomStringConvertible, Equatable {
     
     var description: String {
         switch self {
+            case .connectionError(let message):
+                return message ?? "Connection error"
             case .decodingError(let message):
                 return message ?? "Decoding error"
             case .encodingError(let message):

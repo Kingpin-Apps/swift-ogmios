@@ -1,7 +1,7 @@
 import Testing
 @testable import SwiftOgmios
 
-@Test func testQueryLedgerStateConstitutionalCommittee() async throws {
+@Test func testQueryLedgerStateGovernanceProposals() async throws {
     let mockHTTPConnection = MockHTTPConnection()
     let mockWebSocketConnection = MockWebSocketConnection()
     
@@ -14,22 +14,19 @@ import Testing
         webSocketConnection: mockWebSocketConnection
     )
     
-    let constitutionalCommitteeHTTP = try await httpClient
+    let governanceProposalsHTTP = try await httpClient
         .ledgerStateQuery
-        .constitutionalCommittee
+        .governanceProposals
         .execute(
             id: JSONRPCId.generateNextNanoId()
         )
-    let constitutionalCommitteenWS = try await wsClient
+    let governanceProposalsWS = try await wsClient
         .ledgerStateQuery
-        .constitutionalCommittee
+        .governanceProposals
         .execute(
             id: JSONRPCId.generateNextNanoId()
         )
     
-    #expect(constitutionalCommitteeHTTP.result.members.count == 1)
-    #expect(constitutionalCommitteenWS.result.members.count == 1)
-    
-    #expect(constitutionalCommitteeHTTP.result.quorum!() == "2/3")
-    #expect(constitutionalCommitteenWS.result.quorum!() == "2/3")
+    #expect(governanceProposalsHTTP.result.count == 1)
+    #expect(governanceProposalsWS.result.count == 1)
 }

@@ -2,22 +2,31 @@ import Testing
 @testable import SwiftOgmios
 
 @Test func testQueryLedgerStateDelegateRepresentatives() async throws {
-    let httpClient = try await OgmiosClient(httpOnly: true) // Use `httpOnly: true` for HTTP
-    let wsClient = try await OgmiosClient(httpOnly: false) // Use `httpOnly: false` for WebSocket
+    let mockHTTPConnection = MockHTTPConnection()
+    let mockWebSocketConnection = MockWebSocketConnection()
+    
+    let httpClient = try await OgmiosClient(
+        httpOnly: true,
+        httpConnection: mockHTTPConnection
+    )
+    let wsClient = try await OgmiosClient(
+        httpOnly: false,
+        webSocketConnection: mockWebSocketConnection
+    )
     
     let delegateRepresentativesHTTP = try await httpClient
         .ledgerStateQuery
         .delegateRepresentatives
         .execute(
-            id: .number(httpClient.getNextRequestId())
+            id: JSONRPCId.generateNextNanoId()
         )
     let delegateRepresentativesWS = try await wsClient
         .ledgerStateQuery
         .delegateRepresentatives
         .execute(
-            id: .number(httpClient.getNextRequestId())
+            id: JSONRPCId.generateNextNanoId()
         )
     
-    print("DelegateRepresentatives (HTTP): \(delegateRepresentativesHTTP)")
-    print("DelegateRepresentatives (WS): \(delegateRepresentativesWS)")
+    #expect(delegateRepresentativesHTTP.result.count == 3)
+    #expect(delegateRepresentativesWS.result.count == 3)
 }

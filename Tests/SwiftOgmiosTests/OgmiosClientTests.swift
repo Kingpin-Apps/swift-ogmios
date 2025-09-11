@@ -5,9 +5,11 @@ import Testing
     let httpClient = try await OgmiosClient(httpOnly: true) // Use `httpOnly: true` for HTTP
     let wsClient = try await OgmiosClient(httpOnly: false) // Use `httpOnly: false` for WebSocket
     
-    let healthHTTP = try await httpClient.getServerHealth()
-    let healthWS = try await wsClient.getServerHealth()
+    let mockHTTPConnection = MockHTTPConnection()
     
-    print("Health (HTTP): \(healthHTTP)")
-    print("Health (WS): \(healthWS)")
+    let healthHTTP = try await httpClient.getServerHealth(httpConnection: mockHTTPConnection)
+    let healthWS = try await wsClient.getServerHealth(httpConnection: mockHTTPConnection)
+    
+    #expect(healthHTTP.connectionStatus == "connected")
+    #expect(healthWS.connectionStatus == "connected")
 }
