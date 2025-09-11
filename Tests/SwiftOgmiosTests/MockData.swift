@@ -260,6 +260,23 @@ let nonces = """
 }
 """.data(using: .utf8)!
 
+let operationalCertificates = """
+{
+  "jsonrpc" : "2.0",
+  "id" : "4tKK9",
+  "method" : "queryLedgerState/operationalCertificates",
+  "result" : {
+    "pool1ssvpmsymcz8nd6tu3wgdhy93ajw0yrdauh9gp3djxvda5g6nqma" : 0,
+    "pool14cwzrv0mtr68kp44t9fn5wplk9ku20g6rv98sxggd3azg60qukm" : 6,
+    "pool18ut2jlv66s0dh70pp4za2pu42dg57jynflkj9fexamcfqcsmc5q" : 0,
+    "pool1d4nsv4wa0h3cvdkzuj7trx9d3gz93cj4hkslhekhq0wmcdpwmps" : 10,
+    "pool1sqva3m6zhvwf9kmuek7gsayxyknzv68ltgqqpeptmdgrqp2lmkf" : 4,
+    "pool1397kpa7ylzg4lqrmj3xr28xzq2548c8lafw90qyxvucsslap03v" : 12,
+    
+  }
+}
+""".data(using: .utf8)!
+
 let tip = """
 {
   "method" : "queryLedgerState/tip",
