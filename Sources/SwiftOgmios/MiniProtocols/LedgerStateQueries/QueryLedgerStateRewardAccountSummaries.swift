@@ -30,8 +30,13 @@ public struct QueryLedgerStateRewardAccountSummaries {
     
     // MARK: - Params
     public struct Params: JSONSerializable, Sendable {
-        public let scripts: [AnyStakeCredential]
-        public let keys: [AnyStakeCredential]
+        public let scripts: [AnyStakeCredential]?
+        public let keys: [AnyStakeCredential]?
+        
+        public init(scripts: [AnyStakeCredential]? = nil, keys: [AnyStakeCredential]? = nil) {
+            self.scripts = scripts
+            self.keys = keys
+        }
     }
     
     // MARK: - Response

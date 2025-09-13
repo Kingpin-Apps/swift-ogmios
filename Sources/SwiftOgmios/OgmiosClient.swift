@@ -233,6 +233,10 @@ extension OgmiosClient {
             return QueryLedgerStateProposedProtocolParameters(client: self.client)
         }
         
+        public var rewardAccountSummaries: QueryLedgerStateRewardAccountSummaries {
+            return QueryLedgerStateRewardAccountSummaries(client: self.client)
+        }
+        
         public var tip: QueryLedgerStateTip {
             return QueryLedgerStateTip(client: self.client)
         }

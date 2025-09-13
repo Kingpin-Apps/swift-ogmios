@@ -45,6 +45,8 @@ public func mockSendRequest(json: String) async throws -> Data {
             return protocolParameters
         case "queryLedgerState/proposedProtocolParameters":
             return proposedProtocolParameters
+        case "queryLedgerState/rewardAccountSummaries":
+            return rewardAccountSummaries
         case "queryLedgerState/tip":
             return tip
         default:

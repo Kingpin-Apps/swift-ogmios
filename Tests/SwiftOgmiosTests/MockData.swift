@@ -1206,6 +1206,39 @@ let proposedProtocolParameters = """
 """.data(using: .utf8)!
 
 
+let rewardAccountSummaries = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/rewardAccountSummaries",
+    "result": [
+        {
+            "from": "verificationKey",
+            "credential": "1b515807ebb8a99331ddeb20395267e83f29b80716ada5ea37c0a062",
+            "stakePool": {
+                "id": "pool1vezalga3ge0mt0xf4txz66ctufk6nrmemhhpshwkhedk5jf0stw"
+            },
+            "delegateRepresentative": {
+                "type": "registered",
+                "from": "verificationKey",
+                "id": "3e831562e3760f6fa2628154d1c7dc21798edb210152bd52659e201f"
+            },
+            "rewards": {
+                "ada": {
+                    "lovelace": 91570554888
+                }
+            },
+            "deposit": {
+                "ada": {
+                    "lovelace": 2000000
+                }
+            }
+        }
+    ],
+    "id": null
+}
+""".data(using: .utf8)!
+
+
 let tip = """
 {
   "method" : "queryLedgerState/tip",
