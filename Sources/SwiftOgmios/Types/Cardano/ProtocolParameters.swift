@@ -111,7 +111,7 @@ public struct ProtocolParameters: Codable, Sendable {
     public let stakePoolVotingThresholds: StakePoolVotingThresholds?
     
     /// Minimum size of constitutional committee
-    public let constitutionalCommitteeMinSize: UInt16?
+    public let constitutionalCommitteeMinSize: UInt64?
     
     /// Maximum term length for constitutional committee members
     public let constitutionalCommitteeMaxTermLength: UInt64?
@@ -166,7 +166,7 @@ public struct ProtocolParameters: Codable, Sendable {
         maxExecutionUnitsPerTransaction: ExecutionUnits? = nil,
         maxExecutionUnitsPerBlock: ExecutionUnits? = nil,
         stakePoolVotingThresholds: StakePoolVotingThresholds? = nil,
-        constitutionalCommitteeMinSize: UInt16? = nil,
+        constitutionalCommitteeMinSize: UInt64? = nil,
         constitutionalCommitteeMaxTermLength: UInt64? = nil,
         governanceActionLifetime: Epoch? = nil,
         governanceActionDeposit: ValueAdaOnly? = nil,

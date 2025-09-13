@@ -33,8 +33,6 @@ public func mockSendRequest(json: String) async throws -> Data {
             return mockEraSummaries
         case "queryLedgerState/governanceProposals":
             return mockGovernanceProposals
-        case "queryLedgerState/tip":
-            return tip
         case "queryLedgerState/liveStakeDistribution":
             return mockLiveStakeDistribution
         case "queryLedgerState/nonces":
@@ -45,6 +43,10 @@ public func mockSendRequest(json: String) async throws -> Data {
             return projectedRewards
         case "queryLedgerState/protocolParameters":
             return protocolParameters
+        case "queryLedgerState/proposedProtocolParameters":
+            return proposedProtocolParameters
+        case "queryLedgerState/tip":
+            return tip
         default:
             return Data()
     }

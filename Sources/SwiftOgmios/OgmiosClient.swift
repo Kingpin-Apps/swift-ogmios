@@ -229,6 +229,10 @@ extension OgmiosClient {
             return QueryLedgerStateProtocolParameters(client: self.client)
         }
         
+        public var proposedProtocolParameters: QueryLedgerStateProposedProtocolParameters {
+            return QueryLedgerStateProposedProtocolParameters(client: self.client)
+        }
+        
         public var tip: QueryLedgerStateTip {
             return QueryLedgerStateTip(client: self.client)
         }

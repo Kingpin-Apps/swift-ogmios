@@ -39,14 +39,35 @@ public struct ScriptExecutionPrices: Codable, Sendable {
 public struct CostModels: Codable, Sendable {
     // This would typically contain cost model parameters for different Plutus versions
     // The exact structure depends on the specific cost models used
-    public let plutusV1: [String: Int]?
-    public let plutusV2: [String: Int]?
-    public let plutusV3: [String: Int]?
+    // Keys match the Language enum from the schema: "plutus:v1", "plutus:v2", "plutus:v3"
+    public let costModels: [String: [Int]]
     
-    public init(plutusV1: [String: Int]? = nil, plutusV2: [String: Int]? = nil, plutusV3: [String: Int]? = nil) {
-        self.plutusV1 = plutusV1
-        self.plutusV2 = plutusV2
-        self.plutusV3 = plutusV3
+    public init(costModels: [String: [Int]] = [:]) {
+        self.costModels = costModels
+    }
+    
+    // Convenience accessors for common Plutus versions
+    public var plutusV1: [Int]? {
+        return costModels["plutus:v1"]
+    }
+    
+    public var plutusV2: [Int]? {
+        return costModels["plutus:v2"]
+    }
+    
+    public var plutusV3: [Int]? {
+        return costModels["plutus:v3"]
+    }
+    
+    // Custom coding to handle the dynamic keys
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.costModels = try container.decode([String: [Int]].self)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(costModels)
     }
 }
 
@@ -184,7 +205,7 @@ public struct ProposedProtocolParameters: Codable, Sendable {
     
     // Governance parameters
     public let stakePoolVotingThresholds: StakePoolVotingThresholds?
-    public let constitutionalCommitteeMinSize: UInt16?
+    public let constitutionalCommitteeMinSize: UInt64?
     public let constitutionalCommitteeMaxTermLength: UInt64?
     public let governanceActionLifetime: Epoch?
     public let governanceActionDeposit: ValueAdaOnly?
@@ -223,7 +244,7 @@ public struct ProposedProtocolParameters: Codable, Sendable {
         maxExecutionUnitsPerTransaction: ExecutionUnits? = nil,
         maxExecutionUnitsPerBlock: ExecutionUnits? = nil,
         stakePoolVotingThresholds: StakePoolVotingThresholds? = nil,
-        constitutionalCommitteeMinSize: UInt16? = nil,
+        constitutionalCommitteeMinSize: UInt64? = nil,
         constitutionalCommitteeMaxTermLength: UInt64? = nil,
         governanceActionLifetime: Epoch? = nil,
         governanceActionDeposit: ValueAdaOnly? = nil,

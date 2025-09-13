@@ -1068,6 +1068,144 @@ let protocolParameters = """
 """.data(using: .utf8)!
 
 
+let proposedProtocolParameters = """
+{
+  "jsonrpc": "2.0",
+  "method": "queryLedgerState/proposedProtocolParameters",
+  "result": [
+    {
+      "minFeeCoefficient": 18446744073709552,
+      "minFeeConstant": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "minFeeReferenceScripts": {
+        "range": 4294967295,
+        "base": 0,
+        "multiplier": 0
+      },
+      "minUtxoDepositCoefficient": 123,
+      "minUtxoDepositConstant": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "maxBlockBodySize": {
+        "bytes": 18446744073709552
+      },
+      "maxBlockHeaderSize": {
+        "bytes": 18446744073709552
+      },
+      "maxTransactionSize": {
+        "bytes": 18446744073709552
+      },
+      "maxReferenceScriptsSize": {
+        "bytes": 18446744073709552
+      },
+      "maxValueSize": {
+        "bytes": 18446744073709552
+      },
+      "extraEntropy": "neutral",
+      "stakeCredentialDeposit": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "stakePoolDeposit": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "stakePoolRetirementEpochBound": 18446744073709552,
+      "stakePoolPledgeInfluence": "2/3",
+      "minStakePoolCost": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "desiredNumberOfStakePools": 18446744073709552,
+      "federatedBlockProductionRatio": "2/3",
+      "monetaryExpansion": "2/3",
+      "treasuryExpansion": "2/3",
+      "collateralPercentage": 18446744073709552,
+      "maxCollateralInputs": 18446744073709552,
+      "plutusCostModels": {
+        "plutus:v1": [
+          14,
+          123
+        ],
+        "plutus:v2": [
+          14,
+          42,
+          131
+        ]
+      },
+      "scriptExecutionPrices": {
+        "memory": "2/3",
+        "cpu": "2/3"
+      },
+      "maxExecutionUnitsPerTransaction": {
+        "memory": 18446744073709552,
+        "cpu": 18446744073709552
+      },
+      "maxExecutionUnitsPerBlock": {
+        "memory": 18446744073709552,
+        "cpu": 18446744073709552
+      },
+      "stakePoolVotingThresholds": {
+        "noConfidence": "2/3",
+        "constitutionalCommittee": {
+          "default": "2/3",
+          "stateOfNoConfidence": "2/3"
+        },
+        "hardForkInitiation": "2/3",
+        "protocolParametersUpdate": {
+          "security": "2/3"
+        }
+      },
+      "constitutionalCommitteeMinSize": 65536,
+      "constitutionalCommitteeMaxTermLength": 18446744073709552,
+      "governanceActionLifetime": 18446744073709552,
+      "governanceActionDeposit": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "delegateRepresentativeVotingThresholds": {
+        "noConfidence": "2/3",
+        "constitution": "2/3",
+        "constitutionalCommittee": {
+          "default": "2/3",
+          "stateOfNoConfidence": "2/3"
+        },
+        "hardForkInitiation": "2/3",
+        "protocolParametersUpdate": {
+          "network": "2/3",
+          "economic": "2/3",
+          "technical": "2/3",
+          "governance": "2/3"
+        },
+        "treasuryWithdrawals": "2/3"
+      },
+      "delegateRepresentativeDeposit": {
+        "ada": {
+          "lovelace": 0
+        }
+      },
+      "delegateRepresentativeMaxIdleTime": 18446744073709552,
+      "version": {
+        "major": 4294967295,
+        "minor": 4294967295,
+        "patch": 4294967295
+      }
+    }
+  ],
+  "id": null
+}
+""".data(using: .utf8)!
+
+
 let tip = """
 {
   "method" : "queryLedgerState/tip",
