@@ -237,8 +237,29 @@ extension OgmiosClient {
             return QueryLedgerStateRewardAccountSummaries(client: self.client)
         }
         
+        @available(*, deprecated, renamed: "stakePoolsPerformances", message: "Renamed to stakePoolsPerformances in Ogmios v6.13.0")
+        public var rewardsProvenance: QueryLedgerStateRewardsProvenance {
+            return QueryLedgerStateRewardsProvenance(client: self.client)
+        }
+        
+        public var stakePools: QueryLedgerStateStakePools {
+            return QueryLedgerStateStakePools(client: self.client)
+        }
+        
+        public var stakePoolsPerformances: QueryLedgerStateStakePoolsPerformances {
+            return QueryLedgerStateStakePoolsPerformances(client: self.client)
+        }
+        
         public var tip: QueryLedgerStateTip {
             return QueryLedgerStateTip(client: self.client)
+        }
+        
+        public var treasuryAndReserves: QueryLedgerStateTreasuryAndReserves {
+            return QueryLedgerStateTreasuryAndReserves(client: self.client)
+        }
+        
+        public var utxo: QueryLedgerStateUtxo {
+            return QueryLedgerStateUtxo(client: self.client)
         }
     }
     

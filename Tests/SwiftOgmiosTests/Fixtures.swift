@@ -47,8 +47,18 @@ public func mockSendRequest(json: String) async throws -> Data {
             return proposedProtocolParameters
         case "queryLedgerState/rewardAccountSummaries":
             return rewardAccountSummaries
+        case "queryLedgerState/rewardsProvenance":
+            return rewardsProvenance
+        case "queryLedgerState/stakePoolsPerformances":
+            return stakePoolsPerformances
+        case "queryLedgerState/stakePools":
+            return stakePools
+        case "queryLedgerState/utxo":
+            return utxo
         case "queryLedgerState/tip":
             return tip
+        case "queryLedgerState/treasuryAndReserves":
+            return treasuryAndReserves
         default:
             return Data()
     }

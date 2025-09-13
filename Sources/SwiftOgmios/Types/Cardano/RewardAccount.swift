@@ -1,6 +1,6 @@
 /// A reward account, also known as 'stake address'.
-public struct RewardAccount: StringCallable {
-    let value: String
+public struct RewardAccount: StringCallable, Codable, Sendable {
+    public let value: String
     
     public init(_ value: String) throws {
         guard value.starts(with: "stake1") || value.starts(with: "stake_test1") else {
@@ -9,6 +9,17 @@ public struct RewardAccount: StringCallable {
         }
         
         self.value = value
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        try self.init(value)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
     }
 }
 

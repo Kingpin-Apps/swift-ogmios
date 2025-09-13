@@ -1239,6 +1239,376 @@ let rewardAccountSummaries = """
 """.data(using: .utf8)!
 
 
+let rewardsProvenance = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/rewardsProvenance",
+    "result": {
+        "desiredNumberOfStakePools": 500,
+        "stakePoolPledgeInfluence": "3/10",
+        "totalRewardsInEpoch": {
+            "ada": {
+                "lovelace": 13695546392205
+            }
+        },
+        "activeStakeInEpoch": {
+            "ada": {
+                "lovelace": 950528788771851
+            }
+        },
+        "totalStakeInEpoch": {
+            "ada": {
+                "lovelace": 36069364086442721
+            }
+        },
+        "stakePools": {
+            "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th": {
+                "id": "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th",
+                "stake": {
+                    "ada": {
+                        "lovelace": 13492420330
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 2497634194
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 340000000
+                        }
+                    },
+                    "margin": "0/1",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 500000000
+                        }
+                    }
+                }
+            },
+            "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r": {
+                "id": "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r",
+                "stake": {
+                    "ada": {
+                        "lovelace": 1997639694
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 1997639694
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 170000000
+                        }
+                    },
+                    "margin": "1/100",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 1000000000
+                        }
+                    }
+                }
+            },
+            "pool1lleyxf5xxaxg633c2thh5ttjrf4qxrm3cqaw53kmp7e5q2nlg38": {
+                "id": "pool1lleyxf5xxaxg633c2thh5ttjrf4qxrm3cqaw53kmp7e5q2nlg38",
+                "stake": {
+                    "ada": {
+                        "lovelace": 10002942939
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 10000000000
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 340000000
+                        }
+                    },
+                    "margin": "3/10",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 100000000000
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "id": null
+}
+""".data(using: .utf8)!
+
+
+let stakePoolsPerformances = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/stakePoolsPerformances",
+    "result": {
+        "desiredNumberOfStakePools": 500,
+        "stakePoolPledgeInfluence": "3/10",
+        "totalRewardsInEpoch": {
+            "ada": {
+                "lovelace": 13695546392205
+            }
+        },
+        "activeStakeInEpoch": {
+            "ada": {
+                "lovelace": 950528788771851
+            }
+        },
+        "totalStakeInEpoch": {
+            "ada": {
+                "lovelace": 36069364086442721
+            }
+        },
+        "stakePools": {
+            "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th": {
+                "id": "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th",
+                "stake": {
+                    "ada": {
+                        "lovelace": 13492420330
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 2497634194
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 340000000
+                        }
+                    },
+                    "margin": "0/1",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 500000000
+                        }
+                    }
+                }
+            },
+            "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r": {
+                "id": "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r",
+                "stake": {
+                    "ada": {
+                        "lovelace": 1997639694
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 1997639694
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 170000000
+                        }
+                    },
+                    "margin": "1/100",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 1000000000
+                        }
+                    }
+                }
+            },
+            "pool1lleyxf5xxaxg633c2thh5ttjrf4qxrm3cqaw53kmp7e5q2nlg38": {
+                "id": "pool1lleyxf5xxaxg633c2thh5ttjrf4qxrm3cqaw53kmp7e5q2nlg38",
+                "stake": {
+                    "ada": {
+                        "lovelace": 10002942939
+                    }
+                },
+                "ownerStake": {
+                    "ada": {
+                        "lovelace": 10000000000
+                    }
+                },
+                "approximatePerformance": 0.885,
+                "parameters": {
+                    "cost": {
+                        "ada": {
+                            "lovelace": 340000000
+                        }
+                    },
+                    "margin": "3/10",
+                    "pledge": {
+                        "ada": {
+                            "lovelace": 100000000000
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "id": null
+}
+""".data(using: .utf8)!
+
+
+let utxo = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/utxo",
+    "result": [
+        {
+            "transaction": {
+                "id": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+            },
+            "index": 0,
+            "address": "addr_test1qz66ue36465w2qq40005h2hadad6pnjht8mu6sgplsfj74qdjnshguewlx4ww0eet26y2pal4xpav5prcydf28cvxtjqx46x7f",
+            "value": {
+                "ada": {
+                    "lovelace": 2000000
+                }
+            }
+        },
+        {
+            "transaction": {
+                "id": "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+            },
+            "index": 1,
+            "address": "addr_test1qqag3ume6wap6ywjhgs5g25fkrs4cq90dqtqsz8hs0l4x2k5vgk3l7gpqvxpg2qwqjv2f8g3jv8j8j9v2lq3l5x3j5x3z5j7w",
+            "value": {
+                "ada": {
+                    "lovelace": 5000000
+                },
+                "3542acb3a64d80c29302260d62c3b87a742ad14abf855ebc6733081e": {
+                    "546f6b656e41": 100
+                },
+                "b5ae663aaea8e500157bdf4baafd6f5ba0ce5759f7cd4101fc132f54": {
+                    "706174617465": 1337
+                }
+            },
+            "datumHash": "9e478573ab81ea7a8e31891ce0648b81229f408dcbf5b2b5516a89b9c0ce1f23"
+        },
+        {
+            "transaction": {
+                "id": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+            },
+            "index": 2,
+            "address": "addr_test1qpxg2rqx4q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5q5z5x7v3",
+            "value": {
+                "ada": {
+                    "lovelace": 10000000
+                }
+            },
+            "script": {
+                "language": "plutus:v2",
+                "cbor": "59015859015501000032323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232"
+            }
+        }
+    ],
+    "id": null
+}
+""".data(using: .utf8)!
+
+let stakePools = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/stakePools",
+    "result": {
+        "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th": {
+            "id": "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th",
+            "vrfVerificationKeyHash": "44b93933fc9cba358fdc9bab0f9b5762ecf31c5a32fcdfad63ea2ff9bc385f07",
+            "owners": [
+                "1b515807ebb8a99331ddeb20395267e83f29b80716ada5ea37c0a062"
+            ],
+            "cost": {
+                "ada": {
+                    "lovelace": 340000000
+                }
+            },
+            "margin": "0/1",
+            "pledge": {
+                "ada": {
+                    "lovelace": 500000000
+                }
+            },
+            "rewardAccount": "stake1u8yxtugdv63wxafy9d00nuz6hjyyp4qnggvc9a3vxh8yl0qcqpj",
+            "metadata": {
+                "url": "https://example.com/pool-metadata.json",
+                "hash": "b5f8f69913ca29e453f2ac9fd0d2a906e2f50f75d14ee78d2afb08cbb5a96294"
+            },
+            "relays": [
+                {
+                    "type": "singleHostName",
+                    "hostname": "relay.example.com",
+                    "port": 3001
+                }
+            ],
+            "stake": {
+                "ada": {
+                    "lovelace": 13492420330
+                }
+            }
+        },
+        "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r": {
+            "id": "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r",
+            "vrfVerificationKeyHash": "a63ae2342ab8c541978c1f12f0a2338b78b1486c9c6fcdc5d516df4f08bbd93f",
+            "owners": [
+                "2c234567abb8a99331ddeb20395267e83f29b80716ada5ea37c0a062"
+            ],
+            "cost": {
+                "ada": {
+                    "lovelace": 170000000
+                }
+            },
+            "margin": "1/100",
+            "pledge": {
+                "ada": {
+                    "lovelace": 1000000000
+                }
+            },
+            "rewardAccount": "stake1u9yxtugdv63wxafy9d00nuz6hjyyp4qnggvc9a3vxh8yl0qcqpk",
+            "relays": [
+                {
+                    "type": "singleHostAddr",
+                    "ipv4": "192.168.1.100",
+                    "port": 3001
+                }
+            ]
+        }
+    },
+    "id": null
+}
+""".data(using: .utf8)!
+
+let treasuryAndReserves = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/treasuryAndReserves",
+    "result": {
+        "treasury": {
+            "ada": {
+                "lovelace": 5891303965843822
+            }
+        },
+        "reserves": {
+            "ada": {
+                "lovelace": 8930635913557279
+            }
+        }
+    },
+    "id": null
+}
+""".data(using: .utf8)!
+
 let tip = """
 {
   "method" : "queryLedgerState/tip",
