@@ -2,16 +2,13 @@ import Testing
 @testable import SwiftOgmios
 
 @Test func testQueryLedgerStateTip() async throws {
-    let mockHTTPConnection = MockHTTPConnection()
-    let mockWebSocketConnection = MockWebSocketConnection()
-    
     let httpClient = try await OgmiosClient(
         httpOnly: true,
-        httpConnection: mockHTTPConnection
+        httpConnection: MockHTTPConnection()
     )
     let wsClient = try await OgmiosClient(
         httpOnly: false,
-        webSocketConnection: mockWebSocketConnection
+        webSocketConnection: MockWebSocketConnection()
     )
     
     let ledgerTipHTTP = try await httpClient

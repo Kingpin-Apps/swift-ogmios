@@ -7,7 +7,7 @@ public struct QueryLedgerStateConstitutionalCommittee {
     private let client: OgmiosClient
     
     private static let method: String = "queryLedgerState/constitutionalCommittee"
-    private static let jsonrpc: String = "2.0"
+    private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
         self.client = client

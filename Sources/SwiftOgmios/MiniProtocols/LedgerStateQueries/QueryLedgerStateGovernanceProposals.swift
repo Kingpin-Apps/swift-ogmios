@@ -7,7 +7,7 @@ public struct QueryLedgerStateGovernanceProposals {
     private let client: OgmiosClient
     
     private static let method: String = "queryLedgerState/governanceProposals"
-    private static let jsonrpc: String = "2.0"
+    private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
         self.client = client
@@ -28,6 +28,7 @@ public struct QueryLedgerStateGovernanceProposals {
         }
     }
     
+    // MARK: - Params
     public struct Params: JSONSerializable, Sendable {
         public let proposals: [GovernanceProposalReference]
     }

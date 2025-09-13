@@ -1,12 +1,10 @@
 import Foundation
-import Logging
+import SwiftCardanoCore
 
-
-/// Query the current distribution of the stake across all known stake pools, relative to the TOTAL stake in the network.
-public struct QueryLedgerStateLiveStakeDistribution {
+/// Query the current protocol parameters.
+public struct QueryLedgerStateProtocolParameters {
     private let client: OgmiosClient
-    
-    private static let method: String = "queryLedgerState/liveStakeDistribution"
+    private static let method: String = "queryLedgerState/protocolParameters"
     private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
@@ -22,8 +20,8 @@ public struct QueryLedgerStateLiveStakeDistribution {
         
         init(id: JSONRPCId? = nil) {
             self.id = id
-            self.method = QueryLedgerStateLiveStakeDistribution.method
-            self.jsonrpc = QueryLedgerStateLiveStakeDistribution.jsonrpc
+            self.method = QueryLedgerStateProtocolParameters.method
+            self.jsonrpc = QueryLedgerStateProtocolParameters.jsonrpc
             self.params = nil
         }
     }
@@ -32,14 +30,14 @@ public struct QueryLedgerStateLiveStakeDistribution {
     public struct Response: JSONRPCResponse {
         public let jsonrpc: String
         public let method: String
-        public let result: LiveStakeDistribution
+        public let result: ProtocolParameters
         public let id: JSONRPCId?
         
-        init(result: LiveStakeDistribution, id: JSONRPCId? = nil) {
+        init(result: ProtocolParameters, id: JSONRPCId? = nil) {
             self.result = result
             self.id = id
-            self.method = QueryLedgerStateLiveStakeDistribution.method
-            self.jsonrpc = QueryLedgerStateLiveStakeDistribution.jsonrpc
+            self.method = QueryLedgerStateProtocolParameters.method
+            self.jsonrpc = QueryLedgerStateProtocolParameters.jsonrpc
         }
     }
     
@@ -63,13 +61,12 @@ public struct QueryLedgerStateLiveStakeDistribution {
         }
         
         guard let method = responseJSON["method"] as? String,
-              method == QueryLedgerStateLiveStakeDistribution.method else {
-            throw OgmiosError.invalidMethodError("Incorrect method for \(QueryLedgerStateLiveStakeDistribution.method) response: \(responseJSON["method"] ?? "nil")")
+                method == QueryLedgerStateProtocolParameters.method else {
+            throw OgmiosError.invalidMethodError("Incorrect method for \(QueryLedgerStateProtocolParameters.method) response: \(responseJSON["method"] ?? "nil")")
         }
         
         if let error = responseJSON["error"] as? [String: Any],
            let code = error["code"] as? Int {
-            
             let response: any JSONRPCResponseError
             if code == 2001 {
                 response = try QueryLedgerStateEraMismatch.fromJSONData(data)
@@ -78,6 +75,7 @@ public struct QueryLedgerStateLiveStakeDistribution {
             } else if code == 2003 {
                 response = try QueryLedgerStateAcquiredExpired.fromJSONData(data)
             } else {
+                client.logger.error("Response Error: \(responseJSON)")
                 throw OgmiosError
                     .responseError("Ogmios returned an unknown error code: \(code)")
             }
@@ -92,8 +90,6 @@ public struct QueryLedgerStateLiveStakeDistribution {
         let response = try Response.fromJSONData(data)
         client.logResponse(response: response)
         
-        return response
+        return try Response.fromJSONData(data)
     }
 }
-
-

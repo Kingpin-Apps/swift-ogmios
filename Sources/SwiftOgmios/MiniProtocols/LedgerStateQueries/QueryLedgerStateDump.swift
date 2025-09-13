@@ -8,7 +8,7 @@ public struct QueryLedgerStateDump {
     private let client: OgmiosClient
     
     private static let method: String = "queryLedgerState/dump"
-    private static let jsonrpc: String = "2.0"
+    private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
         self.client = client

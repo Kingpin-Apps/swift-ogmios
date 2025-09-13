@@ -29,6 +29,7 @@ public struct QueryLedgerStateProjectedRewards {
         }
     }
     
+    // MARK: - Params
     public struct Params: JSONSerializable, Sendable {
         public let stake: [ValueAdaOnly]
         public let scripts: [AnyStakeCredential]

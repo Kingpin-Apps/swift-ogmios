@@ -76,7 +76,7 @@ public struct ConstitutionalCommitteeThresholds: Codable, Sendable {
     }
 }
 
-/// Protocol parameters update thresholds
+/// Protocol parameters update thresholds for stake pools
 public struct ProtocolParametersUpdateThresholds: Codable, Sendable {
     public let security: Ratio
     
@@ -85,22 +85,37 @@ public struct ProtocolParametersUpdateThresholds: Codable, Sendable {
     }
 }
 
+/// Protocol parameters update thresholds for DReps
+public struct DelegateRepresentativeProtocolParametersUpdateThresholds: Codable, Sendable {
+    public let network: Ratio
+    public let economic: Ratio
+    public let technical: Ratio
+    public let governance: Ratio
+    
+    public init(network: Ratio, economic: Ratio, technical: Ratio, governance: Ratio) {
+        self.network = network
+        self.economic = economic
+        self.technical = technical
+        self.governance = governance
+    }
+}
+
 /// Delegate representative voting thresholds
 public struct DelegateRepresentativeVotingThresholds: Codable, Sendable {
     public let noConfidence: Ratio
     public let constitutionalCommittee: ConstitutionalCommitteeThresholds
-    public let updateConstitution: Ratio
+    public let constitution: Ratio
     public let hardForkInitiation: Ratio
-    public let protocolParametersUpdate: Ratio
-    public let treasuryWithdrawal: Ratio
+    public let protocolParametersUpdate: DelegateRepresentativeProtocolParametersUpdateThresholds
+    public let treasuryWithdrawals: Ratio
     
-    public init(noConfidence: Ratio, constitutionalCommittee: ConstitutionalCommitteeThresholds, updateConstitution: Ratio, hardForkInitiation: Ratio, protocolParametersUpdate: Ratio, treasuryWithdrawal: Ratio) {
+    public init(noConfidence: Ratio, constitutionalCommittee: ConstitutionalCommitteeThresholds, constitution: Ratio, hardForkInitiation: Ratio, protocolParametersUpdate: DelegateRepresentativeProtocolParametersUpdateThresholds, treasuryWithdrawals: Ratio) {
         self.noConfidence = noConfidence
         self.constitutionalCommittee = constitutionalCommittee
-        self.updateConstitution = updateConstitution
+        self.constitution = constitution
         self.hardForkInitiation = hardForkInitiation
         self.protocolParametersUpdate = protocolParametersUpdate
-        self.treasuryWithdrawal = treasuryWithdrawal
+        self.treasuryWithdrawals = treasuryWithdrawals
     }
 }
 

@@ -5,13 +5,13 @@ import Foundation
 public struct QueryLedgerStateEpoch {
     private let client: OgmiosClient
     private static let method: String = "queryLedgerState/epoch"
-    private static let jsonrpc: String = "2.0"
+    private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
         self.client = client
     }
     
-    // MARK: - QueryLedgerStateEpochRequest
+    // MARK: - Request
     public struct Request: JSONRPCRequest {
         public let jsonrpc: String
         public let method: String
@@ -26,7 +26,7 @@ public struct QueryLedgerStateEpoch {
         }
     }
     
-    // MARK: - QueryLedgerStateEpochRequest
+    // MARK: - Response
     public struct Response: JSONRPCResponse {
         public let jsonrpc: String
         public let method: String
