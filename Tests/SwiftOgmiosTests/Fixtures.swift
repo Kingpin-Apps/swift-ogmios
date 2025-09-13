@@ -41,6 +41,8 @@ public func mockSendRequest(json: String) async throws -> Data {
             return nonces
         case "queryLedgerState/operationalCertificates":
             return operationalCertificates
+        case "queryLedgerState/projectedRewards":
+            return projectedRewards
         default:
             return Data()
     }

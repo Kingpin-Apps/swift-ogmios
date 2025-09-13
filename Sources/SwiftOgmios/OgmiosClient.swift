@@ -221,6 +221,10 @@ extension OgmiosClient {
             return QueryLedgerStateOperationalCertificates(client: self.client)
         }
         
+        public var projectedRewards: QueryLedgerStateProjectedRewards {
+            return QueryLedgerStateProjectedRewards(client: self.client)
+        }
+        
         public var tip: QueryLedgerStateTip {
             return QueryLedgerStateTip(client: self.client)
         }

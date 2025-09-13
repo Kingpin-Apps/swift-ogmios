@@ -2,6 +2,8 @@ import Foundation
 import Network
 import PotentCodables
 
+let JSONRPCVersion = "2.0"
+
 // MARK: - JSON-RPC Protocol Structures
 public protocol JSONSerializable: Codable, CustomDebugStringConvertible, CustomStringConvertible {}
 
@@ -40,6 +42,7 @@ extension JSONSerializable {
     }
 }
 
+// MARK: - JSON-RPC Request
 /// JSON-RPC 2.0 Request
 public protocol JSONRPCRequest: JSONSerializable {
     associatedtype T: Codable
@@ -47,9 +50,12 @@ public protocol JSONRPCRequest: JSONSerializable {
     var jsonrpc: String { get }
     var method: String { get }
     var params: T? { get }
+    
+    /// An arbitrary JSON value that will be mirrored back in the response.
     var id: JSONRPCId? { get }
 }
 
+// MARK: - JSON-RPC Response
 /// JSON-RPC 2.0 Response
 public protocol JSONRPCResponse: JSONSerializable {
     associatedtype T: Codable
@@ -57,9 +63,12 @@ public protocol JSONRPCResponse: JSONSerializable {
     var jsonrpc: String { get }
     var method: String { get }
     var result: T { get }
+    
+    /// Any value that was set by a client request in the 'id' field.
     var id: JSONRPCId? { get }
 }
 
+// MARK: - JSON-RPC Response Error
 public protocol JSONRPCResponseError: JSONSerializable {
     associatedtype T: JSONRPCError
     
@@ -69,12 +78,14 @@ public protocol JSONRPCResponseError: JSONSerializable {
     var id: JSONRPCId? { get }
 }
 
+// MARK: - JSON-RPC Error
 /// JSON-RPC 2.0 Error
 public protocol JSONRPCError: JSONSerializable, Hashable, Sendable {
     var code: Int { get }
     var message: String { get }
 }
 
+// MARK: - JSON-RPC ID
 /// JSON-RPC ID can be string, number, or null
 public enum JSONRPCId: JSONSerializable, Hashable, Sendable {
     case string(String)

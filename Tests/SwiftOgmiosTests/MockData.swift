@@ -277,6 +277,29 @@ let operationalCertificates = """
 }
 """.data(using: .utf8)!
 
+let projectedRewards = """
+{
+    "jsonrpc": "2.0",
+    "method": "queryLedgerState/projectedRewards",
+    "result": {
+        "10000000": {
+            "pool1qqa8tkycj4zck4sy7n8mqr22x5g7tvm8hnp9st95wmuvvtw28th": {
+                "ada": {
+                    "lovelace": 2537
+                }
+            },
+            "pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r": {
+                "ada": {
+                    "lovelace": 2535
+                }
+            }
+        }
+    },
+    "id": null
+}
+""".data(using: .utf8)!
+
+
 let tip = """
 {
   "method" : "queryLedgerState/tip",

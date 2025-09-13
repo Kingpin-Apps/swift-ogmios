@@ -6,7 +6,7 @@ public struct StakePoolId: StringCallable {
     public init(_ value: String) throws {
         guard value.starts(with: "pool1") else {
             throw OgmiosError
-                .invalidFormat("RewardAccount must start with 'pool1', got \(value)")
+                .invalidFormat("StakePoolId must start with 'pool1', got \(value)")
         }
         
         self.value = value

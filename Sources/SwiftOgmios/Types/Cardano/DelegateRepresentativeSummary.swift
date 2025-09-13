@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - PointOrOrigin
+// MARK: - DelegateRepresentativeSummary
 public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
     case registered(Registered)
     case noConfidence(NoConfidence)

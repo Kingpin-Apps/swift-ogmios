@@ -2,14 +2,13 @@ import Foundation
 import Logging
 
 
-/// Query currently registered delegate representatives, their stake (i.e. voting powers) and metadata about them.
-/// Note that 'params' is optional and can be used to filter out delegates. When omitted, ALL delegates are returned.
-/// Pre-defined options (always abstain and always no confidence) are ALWAYS returned.
-public struct QueryLedgerStateDelegateRepresentatives {
+/// Query the projected rewards of an account in a context where the top stake pools are fully saturated.
+/// This projection gives, in principle, a ranking of stake pools that maximizes delegator rewards.
+public struct QueryLedgerStateProjectedRewards {
     private let client: OgmiosClient
     
-    private static let method: String = "queryLedgerState/delegateRepresentatives"
-    private static let jsonrpc: String = "2.0"
+    private static let method: String = "queryLedgerState/projectedRewards"
+    private static let jsonrpc: String = JSONRPCVersion
     
     public init(client: OgmiosClient) {
         self.client = client
@@ -22,42 +21,43 @@ public struct QueryLedgerStateDelegateRepresentatives {
         public let params: Params?
         public let id: JSONRPCId?
         
-        init(id: JSONRPCId? = nil, params: Params? = nil) {
+        init(id: JSONRPCId? = nil, params: Params) {
             self.id = id
-            self.method = QueryLedgerStateDelegateRepresentatives.method
-            self.jsonrpc = QueryLedgerStateDelegateRepresentatives.jsonrpc
+            self.method = QueryLedgerStateProjectedRewards.method
+            self.jsonrpc = QueryLedgerStateProjectedRewards.jsonrpc
             self.params = params
         }
     }
     
     public struct Params: JSONSerializable, Sendable {
-        public let scripts: [AnyDelegateRepresentativeCredential]
-        public let keys: [AnyDelegateRepresentativeCredential]
+        public let stake: [ValueAdaOnly]
+        public let scripts: [AnyStakeCredential]
+        public let keys: [AnyStakeCredential]
     }
     
     // MARK: - Response
     public struct Response: JSONRPCResponse {
         public let jsonrpc: String
         public let method: String
-        public let result: [DelegateRepresentativeSummary]
+        public let result: ProjectedRewards
         public let id: JSONRPCId?
         
-        init(result: [DelegateRepresentativeSummary], id: JSONRPCId? = nil) {
+        init(result: ProjectedRewards, id: JSONRPCId? = nil) {
             self.result = result
             self.id = id
-            self.method = QueryLedgerStateDelegateRepresentatives.method
-            self.jsonrpc = QueryLedgerStateDelegateRepresentatives.jsonrpc
+            self.method = QueryLedgerStateProjectedRewards.method
+            self.jsonrpc = QueryLedgerStateProjectedRewards.jsonrpc
         }
     }
     
     // MARK: - Public Methods
-    public func execute(id: JSONRPCId? = nil, params: Params? = nil) async throws -> Response {
+    public func execute(id: JSONRPCId? = nil, params: Params) async throws -> Response {
         let data = try await self.send(id: id, params: params)
         return try await self.process(data: data)
     }
     
     // MARK: - Private Methods
-    private func send(id: JSONRPCId? = nil, params: Params? = nil) async throws -> Data {
+    private func send(id: JSONRPCId? = nil, params: Params) async throws -> Data {
         let request = Request(id: id, params: params)
         return try await client.sendRequestJSON(request)
     }
@@ -70,8 +70,8 @@ public struct QueryLedgerStateDelegateRepresentatives {
         }
         
         guard let method = responseJSON["method"] as? String,
-                method == QueryLedgerStateDelegateRepresentatives.method else {
-            throw OgmiosError.invalidMethodError("Incorrect method for \(QueryLedgerStateDelegateRepresentatives.method) response: \(responseJSON["method"] ?? "nil")")
+              method == QueryLedgerStateProjectedRewards.method else {
+            throw OgmiosError.invalidMethodError("Incorrect method for \(QueryLedgerStateProjectedRewards.method) response: \(responseJSON["method"] ?? "nil")")
         }
         
         if let error = responseJSON["error"] as? [String: Any],
@@ -102,5 +102,3 @@ public struct QueryLedgerStateDelegateRepresentatives {
         return response
     }
 }
-
-
