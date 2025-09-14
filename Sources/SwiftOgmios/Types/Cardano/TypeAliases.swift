@@ -1,3 +1,7 @@
+import Foundation
+
+/// A block number, the i-th block to be minted is number i.
+public typealias BlockHeight = UInt128
 
 /// An epoch number or length.
 public typealias Epoch = UInt64
@@ -41,6 +45,42 @@ public struct Ratio: StringCallable {
         }
                       
         self.value = value
+    }
+}
+
+public struct UtcTime: StringCallable {
+    let value: Date
+    
+    public init(_ value: Date) throws {
+        self.value = value
+    }
+    
+    public init(from string: String) throws {
+        let formatter = ISO8601DateFormatter()
+        guard let date = formatter.date(from: string) else {
+            throw OgmiosError.invalidFormat("UtcTime must be in ISO 8601 format")
+        }
+        self.value = date
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let dateString = try container.decode(String.self)
+        try self.init(from: dateString)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(toString())
+    }
+    
+    public var description: String {
+        return toString()
+    }
+    
+    private func toString() -> String {
+        let formatter = ISO8601DateFormatter()
+        return formatter.string(from: value)
     }
 }
 

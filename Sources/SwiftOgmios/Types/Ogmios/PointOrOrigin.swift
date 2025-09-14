@@ -1,4 +1,11 @@
 import Foundation
+import BigInt
+
+// MARK: - Point
+public struct Point: JSONSerializable, Sendable {
+    public let slot: Slot
+    public let id: DigestBlake2b256
+}
 
 // MARK: - PointOrOrigin
 public enum PointOrOrigin: JSONSerializable, Sendable {
@@ -29,8 +36,38 @@ public enum PointOrOrigin: JSONSerializable, Sendable {
     }
 }
 
-// MARK: - Point
-public struct Point: JSONSerializable, Sendable {
-    public let slot: Slot
-    public let id: DigestBlake2b256
+
+// MARK: - BlockHeightOrOrigin
+public enum BlockHeightOrOrigin: JSONSerializable, Sendable {
+    case blockHeight(BlockHeight)
+    case origin(Origin)
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let blockHeight = try? container.decode(BlockHeight.self) {
+            self = .blockHeight(blockHeight)
+            return
+        }
+        if let origin = try? container.decode(Origin.self) {
+            self = .origin(origin)
+            return
+        }
+        throw DecodingError.typeMismatch(
+            BlockHeightOrOrigin.self,
+            DecodingError.Context(
+                codingPath: decoder.codingPath,
+                debugDescription: "Wrong type for BlockHeightOrOrigin"
+            )
+        )
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+            case .blockHeight(let blockHeight):
+                try container.encode(blockHeight)
+            case .origin(let origin):
+                try container.encode(origin)
+        }
+    }
 }

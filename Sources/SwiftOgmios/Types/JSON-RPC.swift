@@ -49,7 +49,7 @@ public protocol JSONRPCRequest: JSONSerializable {
     
     var jsonrpc: String { get }
     var method: String { get }
-    var params: T? { get }
+    var params: T { get }
     
     /// An arbitrary JSON value that will be mirrored back in the response.
     var id: JSONRPCId? { get }
@@ -69,7 +69,7 @@ public protocol JSONRPCResponse: JSONSerializable {
 }
 
 // MARK: - JSON-RPC Response Error
-public protocol JSONRPCResponseError: JSONSerializable {
+public protocol JSONRPCResponseError: JSONSerializable, Sendable {
     associatedtype T: JSONRPCError
     
     var jsonrpc: String { get }

@@ -57,6 +57,10 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         return LedgerStateQuery(client: self)
     }
     
+    public var networkQuery: NetworkQuery {
+        return NetworkQuery(client: self)
+    }
+    
     // MARK: - Initialization
     init(
         host: String = "localhost",
@@ -260,6 +264,26 @@ extension OgmiosClient {
         
         public var utxo: QueryLedgerStateUtxo {
             return QueryLedgerStateUtxo(client: self.client)
+        }
+    }
+    
+    public struct NetworkQuery {
+        private let client: OgmiosClient
+        
+        public init(client: OgmiosClient) {
+            self.client = client
+        }
+        
+        public var blockHeight: QueryNetworkBlockHeight {
+            return QueryNetworkBlockHeight(client: self.client)
+        }
+        
+        public var genesisConfiguration: QueryNetworkGenesisConfiguration {
+            return QueryNetworkGenesisConfiguration(client: self.client)
+        }
+        
+        public var startTime: QueryNetworkStartTime {
+            return QueryNetworkStartTime(client: self.client)
         }
     }
     

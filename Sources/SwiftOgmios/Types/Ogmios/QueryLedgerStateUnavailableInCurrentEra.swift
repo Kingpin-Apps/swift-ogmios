@@ -23,6 +23,3 @@ public struct QueryLedgerStateUnavailableInCurrentEra: JSONRPCResponseError {
         self.jsonrpc = jsonrpc
     }
 }
-
-
-

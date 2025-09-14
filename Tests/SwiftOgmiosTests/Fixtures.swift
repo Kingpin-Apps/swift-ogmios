@@ -59,6 +59,25 @@ public func mockSendRequest(json: String) async throws -> Data {
             return tip
         case "queryLedgerState/treasuryAndReserves":
             return treasuryAndReserves
+        case "queryNetwork/blockHeight":
+            return blockHeight
+        case "queryNetwork/genesisConfiguration":
+            let params = requestJSON?["params"] as? [String: Any]
+            let era = params!["era"] as? String ?? ""
+            switch era {
+                case "byron":
+                    return genesisConfigurationByron
+                case "shelley":
+                    return genesisConfigurationShelley
+                case "conway":
+                    return genesisConfigurationConway
+                case "alonzo":
+                    return genesisConfigurationAlonzo
+                default:
+                    throw OgmiosError.invalidFormat("Invalid era")
+            }
+        case "queryNetwork/startTime":
+            return startTime
         default:
             return Data()
     }

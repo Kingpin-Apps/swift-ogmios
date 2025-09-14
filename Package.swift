@@ -7,7 +7,7 @@ let package = Package(
     name: "SwiftOgmios",
     platforms: [
       .iOS(.v14),
-      .macOS(.v14),
+      .macOS(.v15),
       .watchOS(.v7),
       .tvOS(.v14),
     ],
