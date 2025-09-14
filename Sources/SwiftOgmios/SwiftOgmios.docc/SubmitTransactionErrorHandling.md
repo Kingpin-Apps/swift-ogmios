@@ -1,10 +1,10 @@
 # SubmitTransaction Enhanced Error Handling
 
-The `SubmitTransaction` process method has been enhanced to properly return the appropriate `SubmitTransactionError` based on the error code received from Ogmios.
+The `SubmitTransaction` process method returns the appropriate `SubmitTransactionError` based on the error code received from Ogmios.
 
 ## Supported Error Codes
 
-The following SubmitTransactionFailure error codes are now properly handled:
+The following SubmitTransactionFailure error codes are handled:
 
 ### Era and Signature Errors
 - **3005**: `SubmitTransactionFailureEraMismatch` - Failed to submit in current era

@@ -1712,3 +1712,16 @@ let evaluateTransaction = """
   ]
 }
 """.data(using: .utf8)!
+
+
+let acquireMempool = """
+{
+    "jsonrpc": "2.0",
+    "method": "acquireMempool",
+    "result": {
+        "acquired": "mempool",
+        "slot": 91232958
+    },
+    "id": null
+}
+""".data(using: .utf8)!

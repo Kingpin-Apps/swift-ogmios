@@ -65,6 +65,10 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         return TransactionSubmission(client: self)
     }
     
+    public var mempoolMonitor: MempoolMonitor {
+        return MempoolMonitor(client: self)
+    }
+    
     // MARK: - Initialization
     init(
         host: String = "localhost",
@@ -324,6 +328,10 @@ extension OgmiosClient {
         
         public init(client: OgmiosClient) {
             self.client = client
+        }
+        
+        public var acquireMempool: AcquireMempool {
+            return AcquireMempool(client: self.client)
         }
     }
 }
