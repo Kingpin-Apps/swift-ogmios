@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - GovernanceAction
-public enum GovernanceAction: JSONSerializable, Sendable {
+public enum GovernanceAction: JSONSerializable {
     case protocolParametersUpdate(ProtocolParametersUpdate)
     case hardForkInitiation(HardForkInitiation)
     case treasuryTransfer(TreasuryTransfer)
@@ -30,7 +30,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     
     /// The 'ancestor' is a reference to the previous governance action of this group.
     /// It is optional for the first one and required after so that they all actions of a same group form a chain.
-    public struct ProtocolParametersUpdate: Codable, Sendable {
+    public struct ProtocolParametersUpdate: JSONSerializable {
         /// A special delegate representative which always abstain.
         public let type: String 
         public let ancestor: GovernanceProposalReference?
@@ -53,7 +53,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
         }
     }
     
-    public struct HardForkInitiation: Codable, Sendable {
+    public struct HardForkInitiation: JSONSerializable {
         public let type: String
         public let ancestor: GovernanceProposalReference?
         public let version: ProtocolVersion
@@ -73,13 +73,13 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     }
     
     /// A transfer from or to the treasury / reserves authored by genesis delegates.
-    public struct TreasuryTransfer: Codable, Sendable {
+    public struct TreasuryTransfer: JSONSerializable {
         public let type: String
         public let source: Source
         public let target: Source
         public let value: ValueAdaOnly
         
-        public enum Source: String, Codable, Sendable {
+        public enum Source: String, JSONSerializable {
             case reserves
             case treasury
         }
@@ -101,7 +101,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     }
     
     /// One of more withdrawals from the treasury.
-    public struct TreasuryWithdrawals: Codable, Sendable {
+    public struct TreasuryWithdrawals: JSONSerializable {
         public let type: String
         public let withdrawals: RewardTransfer
         public let guardrails: Guardrails?
@@ -123,13 +123,13 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     /// A change (partial or total) in the constitutional committee. The 'ancestor' is a reference to the
     /// previous governance action of this group (also includes no confidence actions in this case).
     /// It is optional for the first one and required after so that they all actions of a same group form a chain.
-    public struct ConstitutionalCommittee: Codable, Sendable {
+    public struct ConstitutionalCommittee: JSONSerializable {
         public let type: String
         public let ancestor: GovernanceProposalReference?
         public let members: Members
         public let quorum: Ratio?
         
-        public struct Members: Codable, Sendable {
+        public struct Members: JSONSerializable {
             public let added: [ConstitutionalCommitteeMemberSummary]?
             public let removed: [Members]?
             
@@ -162,7 +162,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     /// A change in the constitution. Only its hash is recorded on-chain.
     /// The 'ancestor' is a reference to the previous governance action of this group.
     /// It is optional for the first one and required after so that they all actions of a same group form a chain.
-    public struct Constitution: Codable, Sendable {
+    public struct Constitution: JSONSerializable {
         public let type: String
         public let ancestor: GovernanceProposalReference?
         public let guardrails: Guardrails?
@@ -187,7 +187,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     /// A motion of no-confidence, indicate a lack of trust in the constitutional committee.
     /// The 'ancestor' is a reference to the previous governance action of this group.
     ///  It is optional for the first one and required after so that they all actions of a same group form a chain.
-    public struct NoConfidence: Codable, Sendable {
+    public struct NoConfidence: JSONSerializable {
         public let type: String
         public let ancestor: GovernanceProposalReference?
         
@@ -204,7 +204,7 @@ public enum GovernanceAction: JSONSerializable, Sendable {
     }
     
     /// An action that has no effect on-chain, other than an on-chain record
-    public struct Information: Codable, Sendable {
+    public struct Information: JSONSerializable {
         public let type: String
         
         public init(

@@ -48,7 +48,7 @@ public struct QueryNetworkGenesisConfiguration {
     }
     
     // MARK: - Result
-    public enum Result: JSONSerializable, Sendable {
+    public enum Result: JSONSerializable {
         case invalidGenesis(QueryNetworkInvalidGenesis)
         case byron(GenesisConfigurationByron)
         case shelley(GenesisConfigurationShelley)
@@ -86,7 +86,7 @@ public struct QueryNetworkGenesisConfiguration {
             client.logResponseError(response: response)
             throw OgmiosError
                 .responseError(
-                    "Ogmios returned an error: \(String(describing: response.error?.message))"
+                    "Ogmios returned an error: \(String(describing: response.error.message))"
                 )
         }
         

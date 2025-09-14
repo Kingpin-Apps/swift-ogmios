@@ -1655,3 +1655,60 @@ let startTime = """
     "id": null
 }
 """.data(using: .utf8)!
+
+
+let networkTip = """
+{
+  "jsonrpc" : "2.0",
+  "result" : {
+    "slot" : 91219322,
+    "id" : "6bf2e5f0d268bd08ec19e4f3d0aa522416b6ca775c22b4ea0a9818e41d249f27"
+  },
+  "id" : "PCD5E",
+  "method" : "queryNetwork/tip"
+}
+""".data(using: .utf8)!
+
+
+let submitTransaction = """
+{
+  "jsonrpc": "2.0",
+  "method": "submitTransaction",
+  "result": {
+    "transaction": {
+      "id": "a3edaf9627d81c28a51a729b370f97452f485c70b8ac9dca15791e0ae26618ae"
+    }
+  },
+  "id": null
+}
+""".data(using: .utf8)!
+
+
+let evaluateTransaction = """
+{
+  "jsonrpc": "2.0",
+  "method": "evaluateTransaction",
+  "result": [
+    {
+      "validator": {
+        "purpose": "spend",
+        "index": 1
+      },
+      "budget": {
+        "memory": 5236222,
+        "cpu": 1212353
+      }
+    },
+    {
+      "validator": {
+        "purpose": "mint",
+        "index": 0
+      },
+      "budget": {
+        "memory": 5000,
+        "cpu": 42
+      }
+    }
+  ]
+}
+""".data(using: .utf8)!

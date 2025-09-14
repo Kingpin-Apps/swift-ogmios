@@ -1,17 +1,17 @@
 
-public struct Constitution: Codable, Sendable {
+public struct Constitution: JSONSerializable {
     public let guardrails: Guardrails?
     public let metadata: Anchor
 }
 
-public enum ConstitutionalCommitteeMemberStatus: String, Codable, Sendable {
+public enum ConstitutionalCommitteeMemberStatus: String, JSONSerializable {
     case active
     case expired
     case unrecognized
 }
 
 
-public enum ConstitutionalCommitteeDelegate: Codable, Sendable {
+public enum ConstitutionalCommitteeDelegate: JSONSerializable {
     case authorized(Authorized)
     case resigned(Resigned)
     case none(None)
@@ -20,18 +20,18 @@ public enum ConstitutionalCommitteeDelegate: Codable, Sendable {
         case status
     }
     
-    public struct Authorized: Codable, Sendable {
+    public struct Authorized: JSONSerializable {
         public var status: String = "authorized"
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
     }
     
-    public struct Resigned: Codable, Sendable {
+    public struct Resigned: JSONSerializable {
         public var status: String = "resigned"
         public let metadata: Anchor
     }
     
-    public struct None: Codable, Sendable {
+    public struct None: JSONSerializable {
         public var status: String = "none"
     }
     
@@ -62,19 +62,19 @@ public enum ConstitutionalCommitteeDelegate: Codable, Sendable {
     }
 }
 
-public enum ConstitutionalCommitteeMemberChangeStatus: String, Codable, Sendable {
+public enum ConstitutionalCommitteeMemberChangeStatus: JSONSerializable {
     case toBeEnacted
     case toBeRemoved
     case expiring
     case adjustingMandate
 }
 
-public struct ConstitutionalCommitteeMemberNext: Codable, Sendable {
+public struct ConstitutionalCommitteeMemberNext: JSONSerializable {
     public let change: ConstitutionalCommitteeMemberChangeStatus
     public let mandate: Mandate?
 }
 
-public struct ConstitutionalCommitteeMember: Codable, Sendable {
+public struct ConstitutionalCommitteeMember: JSONSerializable {
     public let id: DigestBlake2b224
     public let from: CredentialOrigin
     
@@ -87,7 +87,7 @@ public struct ConstitutionalCommitteeMember: Codable, Sendable {
     public let next: ConstitutionalCommitteeMemberNext?
 }
 
-public struct ConstitutionalCommitteeMemberSummary: Codable, Sendable {
+public struct ConstitutionalCommitteeMemberSummary: JSONSerializable {
     public let id: DigestBlake2b224
     public let from: CredentialOrigin
     public let mandate: Mandate?

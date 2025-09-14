@@ -211,3 +211,98 @@ public struct UtxoEntry: Codable, Sendable, Equatable, Hashable {
 // MARK: - Utxo Array
 /// Array of UTXO entries
 public typealias Utxo = [UtxoEntry]
+public typealias PolicyId = DigestBlake2b224
+
+public enum ScriptPurpose: JSONSerializable {
+    case spend(Spend)
+    case mint(Mint)
+    case publish(Publish)
+    case withdraw(Withdraw)
+    case propose(Propose)
+    case vote(Vote)
+    
+    public struct Spend: JSONSerializable {
+        public let purpose: String
+        public let outputReference: TransactionOutputReference
+        
+        public init(outputReference: TransactionOutputReference, purpose: String = "spend") {
+            self.outputReference = outputReference
+            self.purpose = purpose
+        }
+    }
+    
+    public struct Mint: JSONSerializable {
+        public let purpose: String
+        public let policy: PolicyId
+        
+        public init(policy: PolicyId, purpose: String = "publish") {
+            self.policy = policy
+            self.purpose = purpose
+        }
+    }
+    
+    public struct Publish: JSONSerializable {
+        public let purpose: String
+        public let policy: PolicyId
+        
+        public init(policy: PolicyId, purpose: String = "mint") {
+            self.policy = policy
+            self.purpose = purpose
+        }
+    }
+    
+    public struct Propose: JSONSerializable {
+        public let purpose: String
+        public let proposal: GovernanceProposal
+        
+        public init(proposal: GovernanceProposal, purpose: String = "propose") {
+            self.proposal = proposal
+            self.purpose = purpose
+        }
+    }
+    
+    public struct Vote: JSONSerializable {
+        public let purpose: String
+        public let issuer: GovernanceVoter
+        
+        public init(issuer: GovernanceVoter, purpose: String = "vote") {
+            self.issuer = issuer
+            self.purpose = purpose
+        }
+    }
+    
+    public struct Withdraw: JSONSerializable {
+        public let purpose: String
+        public let rewardAccount: RewardAccount
+        
+        public init(rewardAccount: RewardAccount, purpose: String = "withdraw") {
+            self.rewardAccount = rewardAccount
+            self.purpose = purpose
+        }
+    }
+}
+
+public enum Language: String, JSONSerializable {
+    case plutusV1 = "plutus:v1"
+    case plutusV2 = "plutus:v2"
+    case plutusV3 = "plutus:v3"
+}
+
+public struct ValidityInterval: JSONSerializable {
+    public let invalidBefore: Slot?
+    public let invalidAfter: Slot?
+}
+
+public struct RedeemerPointer: JSONSerializable {
+    public let purpose: RedeemerPurpose
+    public let index: UInt64
+}
+
+public enum RedeemerPurpose: String, JSONSerializable {
+    case spend
+    case mint
+    case publish
+    case withdraw
+    case vote
+    case propose
+}

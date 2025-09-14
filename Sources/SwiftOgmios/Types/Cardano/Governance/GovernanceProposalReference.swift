@@ -1,10 +1,17 @@
 
-public struct GovernanceProposalReference: Codable, Sendable {
+public struct GovernanceProposal: JSONSerializable {
+    public let deposit: ValueAdaOnly?
+    public let returnAccount: RewardAccount?
+    public let metadata: Anchor?
+    public let action: GovernanceAction
+}
+
+public struct GovernanceProposalReference: JSONSerializable {
     public let transaction: TransactionId
     public let index: UInt32
 }
 
-public struct GovernanceProposalState: Codable, Sendable {
+public struct GovernanceProposalState: JSONSerializable {
     public let proposal: GovernanceProposalReference
     public let deposit: ValueAdaOnly
     public let returnAccount: RewardAccount
@@ -16,7 +23,7 @@ public struct GovernanceProposalState: Codable, Sendable {
 }
 
 ///// A Blake2b 32-byte hash digest of a transaction body
-public struct TransactionId: Codable, Sendable {
+public struct TransactionId: JSONSerializable {
     public let id: String
     
     public init(_ id: String) throws {

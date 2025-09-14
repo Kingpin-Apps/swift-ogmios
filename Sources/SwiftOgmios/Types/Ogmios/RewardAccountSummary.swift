@@ -3,12 +3,12 @@ import Foundation
 // MARK: - Supporting Types
 
 /// A delegate representative for reward account summaries (simpler than DelegateRepresentativeSummary)
-public enum DelegateRepresentative: Codable, Sendable {
+public enum DelegateRepresentative: JSONSerializable {
     case registered(Registered)
     case noConfidence
     case abstain
     
-    public struct Registered: Codable, Sendable {
+    public struct Registered: JSONSerializable {
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
         public let type: String
@@ -64,7 +64,7 @@ public enum DelegateRepresentative: Codable, Sendable {
 }
 
 /// Stake pool information within a reward account summary
-public struct StakePoolInfo: Codable, Sendable {
+public struct StakePoolInfo: JSONSerializable {
     public let id: StakePoolId
     
     public init(id: StakePoolId) {
@@ -75,7 +75,7 @@ public struct StakePoolInfo: Codable, Sendable {
 // MARK: - Main Type
 
 /// Summary of a reward account's delegation settings and rewards
-public struct RewardAccountSummary: Codable, Sendable {
+public struct RewardAccountSummary: JSONSerializable {
     
     /// Origin of the stake credential (verificationKey or script)
     public let from: CredentialOrigin

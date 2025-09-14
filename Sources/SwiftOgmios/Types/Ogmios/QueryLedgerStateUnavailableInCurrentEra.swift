@@ -3,7 +3,7 @@ import Foundation
 public struct QueryLedgerStateUnavailableInCurrentEra: JSONRPCResponseError {
     public let jsonrpc: String
     public let method: String
-    public let error: QueryLedgerStateUnavailableInCurrentEraError?
+    public let error: QueryLedgerStateUnavailableInCurrentEraError
     public let id: JSONRPCId?
     
     public struct QueryLedgerStateUnavailableInCurrentEraError: JSONRPCError {

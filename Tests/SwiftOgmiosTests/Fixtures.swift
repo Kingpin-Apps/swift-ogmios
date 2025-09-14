@@ -78,6 +78,12 @@ public func mockSendRequest(json: String) async throws -> Data {
             }
         case "queryNetwork/startTime":
             return startTime
+        case "queryNetwork/tip":
+            return networkTip
+        case "submitTransaction":
+            return submitTransaction
+        case "evaluateTransaction":
+            return evaluateTransaction
         default:
             return Data()
     }

@@ -1,4 +1,4 @@
-protocol StringCallable: JSONSerializable, Hashable, Equatable, Sendable {
+protocol StringCallable: JSONSerializable {
     associatedtype T: Codable & Sendable & Hashable & CustomStringConvertible
     
     var value: T { get }
@@ -18,8 +18,8 @@ extension StringCallable {
     // For JSON decoding
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let rootValue = try container.decode(T.self)
-        try self.init(rootValue)
+        let value = try container.decode(T.self)
+        try self.init(value)
     }
     
     // For JSON encoding

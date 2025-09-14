@@ -3,7 +3,7 @@ import Foundation
 public struct QueryLedgerStateAcquiredExpired: JSONRPCResponseError {
     public let jsonrpc: String
     public let method: String
-    public let error: QueryLedgerStateAcquiredExpiredError?
+    public let error: QueryLedgerStateAcquiredExpiredError
     public let id: JSONRPCId?
     
     public struct QueryLedgerStateAcquiredExpiredError: JSONRPCError {

@@ -16,22 +16,22 @@ public typealias DigestAny = String
 /// This should be (at least) the number of slots in which we are guaranteed to have k blocks.
 public typealias SafeZone = UInt64
 
-public enum CredentialOrigin : String, Codable, Hashable, Sendable {
+public enum CredentialOrigin : String, JSONSerializable {
     case verificationKey
     case script
 }
 
-public struct Delegators: Codable, Sendable {
+public struct Delegators: JSONSerializable {
     public let credential: DigestBlake2b224
     public let from: CredentialOrigin
 }
 
-public struct Members: Codable, Sendable {
+public struct Members: JSONSerializable {
     public let id: DigestBlake2b224
     public let from: CredentialOrigin
 }
 
-public struct EpochWrapper: Codable, Sendable {
+public struct EpochWrapper: JSONSerializable {
     public let epoch: Epoch
 }
 
@@ -84,10 +84,10 @@ public struct UtcTime: StringCallable {
     }
 }
 
-public struct Mandate: Codable, Sendable {
+public struct Mandate: JSONSerializable {
     public let epoch: Epoch
 }
 
-public struct NumberOfBytes: Codable, Sendable {
+public struct NumberOfBytes: JSONSerializable {
     public let bytes: UInt64
 }

@@ -61,6 +61,10 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         return NetworkQuery(client: self)
     }
     
+    public var transactionSubmission: TransactionSubmission {
+        return TransactionSubmission(client: self)
+    }
+    
     // MARK: - Initialization
     init(
         host: String = "localhost",
@@ -285,6 +289,10 @@ extension OgmiosClient {
         public var startTime: QueryNetworkStartTime {
             return QueryNetworkStartTime(client: self.client)
         }
+        
+        public var tip: QueryNetworkTip {
+            return QueryNetworkTip(client: self.client)
+        }
     }
     
     public struct ChainSync {
@@ -300,6 +308,14 @@ extension OgmiosClient {
         
         public init(client: OgmiosClient) {
             self.client = client
+        }
+        
+        public var submitTransaction: SubmitTransaction {
+            return SubmitTransaction(client: self.client)
+        }
+        
+        public var evaluateTransaction: EvaluateTransaction {
+            return EvaluateTransaction(client: self.client)
         }
     }
     

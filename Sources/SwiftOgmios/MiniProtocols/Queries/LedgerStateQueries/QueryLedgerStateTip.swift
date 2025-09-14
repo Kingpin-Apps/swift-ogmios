@@ -86,7 +86,7 @@ public struct QueryLedgerStateTip {
             client.logResponseError(response: response)
             throw OgmiosError
                 .responseError(
-                    "Ogmios returned an error: \(String(describing: response.error?.message))"
+                    "Ogmios returned an error: \(String(describing: response.error.message))"
                 )
         }
         

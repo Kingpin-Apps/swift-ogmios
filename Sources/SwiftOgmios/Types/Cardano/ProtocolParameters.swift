@@ -1,15 +1,8 @@
-//
-//  ProtocolParameters.swift
-//  SwiftOgmios
-//
-//  Created by Hareem Adderley on 12/09/2025.
-//
-
 import Foundation
 
 /// Current protocol parameters as returned by Ogmios queries
 /// These represent the active protocol parameters for the current epoch
-public struct ProtocolParameters: Codable, Sendable {
+public struct ProtocolParameters: JSONSerializable {
     
     // MARK: - Fee Parameters (Required)
     

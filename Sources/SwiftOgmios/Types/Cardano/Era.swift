@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Era: String, Codable, Sendable {
+public enum Era: String, JSONSerializable {
     case byron
     case shelley
     case allegra
@@ -10,30 +10,30 @@ public enum Era: String, Codable, Sendable {
     case conway
 }
 
-public enum EraWithGenesis: String, Codable, Sendable, CaseIterable {
+public enum EraWithGenesis: String, CaseIterable, JSONSerializable {
     case byron
     case shelley
     case alonzo
     case conway
 }
 
-public struct EraWrapper: Codable, Sendable {
+public struct EraWrapper: JSONSerializable {
     public let era: Era
 }
 
-public struct EraWithGenesisWrapper: Codable, Sendable {
+public struct EraWithGenesisWrapper: JSONSerializable {
     public let era: EraWithGenesis
 }
 
 /// Summary of the confirmed parts of the ledger.
-public struct EraSummary: Codable, Sendable {
+public struct EraSummary: JSONSerializable {
     public let start: Bound
     public let end: Bound?
     public let parameters: EraParameters
 }
 
 /// Parameters that can vary across hard forks.
-public struct EraParameters: Codable, Sendable {
+public struct EraParameters: JSONSerializable {
     public let epochLength: Epoch
     public let slotLength: SlotLength
     public let safeZone: SafeZone?

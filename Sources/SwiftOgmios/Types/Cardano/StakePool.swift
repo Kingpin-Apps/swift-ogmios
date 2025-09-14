@@ -15,7 +15,7 @@ public struct StakePoolId: StringCallable {
 }
 
 /// Complete stake pool information including parameters and metadata
-public struct StakePool: Codable, Sendable {
+public struct StakePool: JSONSerializable {
     /// The stake pool identifier
     public let id: StakePoolId
     
@@ -72,12 +72,12 @@ public struct StakePool: Codable, Sendable {
 }
 
 /// Network relay information for stake pools
-public enum Relay: Codable, Sendable {
+public enum Relay: JSONSerializable {
     case singleHostAddr(SingleHostAddr)
     case singleHostName(SingleHostName)
     case multiHostName(MultiHostName)
     
-    public struct SingleHostAddr: Codable, Sendable {
+    public struct SingleHostAddr: JSONSerializable {
         public let port: UInt16?
         public let ipv4: String?
         public let ipv6: String?
@@ -89,7 +89,7 @@ public enum Relay: Codable, Sendable {
         }
     }
     
-    public struct SingleHostName: Codable, Sendable {
+    public struct SingleHostName: JSONSerializable {
         public let port: UInt16?
         public let hostname: String
         
@@ -99,7 +99,7 @@ public enum Relay: Codable, Sendable {
         }
     }
     
-    public struct MultiHostName: Codable, Sendable {
+    public struct MultiHostName: JSONSerializable {
         public let hostname: String
         
         public init(hostname: String) {

@@ -4,7 +4,7 @@ import Foundation
 public struct QueryNetworkInvalidGenesis: JSONRPCResponseError {
     public let jsonrpc: String
     public let method: String
-    public let error: QueryNetworkInvalidGenesisError?
+    public let error: QueryNetworkInvalidGenesisError
     public let id: JSONRPCId?
     
     /// Something went wrong (e.g. misconfiguration) in reading genesis file for the latest era.

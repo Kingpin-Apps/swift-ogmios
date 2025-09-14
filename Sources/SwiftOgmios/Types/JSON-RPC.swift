@@ -2,10 +2,11 @@ import Foundation
 import Network
 import PotentCodables
 
-let JSONRPCVersion = "2.0"
+public let JSONRPCVersion = "2.0"
 
 // MARK: - JSON-RPC Protocol Structures
-public protocol JSONSerializable: Codable, CustomDebugStringConvertible, CustomStringConvertible {}
+public protocol JSONSerializable: Codable, Equatable, Hashable, CustomDebugStringConvertible, CustomStringConvertible, Sendable {
+}
 
 extension JSONSerializable {
     public static func fromJSONData(_ data: Data) throws -> Self {
@@ -69,25 +70,25 @@ public protocol JSONRPCResponse: JSONSerializable {
 }
 
 // MARK: - JSON-RPC Response Error
-public protocol JSONRPCResponseError: JSONSerializable, Sendable {
+public protocol JSONRPCResponseError: JSONSerializable {
     associatedtype T: JSONRPCError
     
     var jsonrpc: String { get }
     var method: String { get }
-    var error: T? { get }
+    var error: T { get }
     var id: JSONRPCId? { get }
 }
 
 // MARK: - JSON-RPC Error
 /// JSON-RPC 2.0 Error
-public protocol JSONRPCError: JSONSerializable, Hashable, Sendable {
+public protocol JSONRPCError: JSONSerializable {
     var code: Int { get }
     var message: String { get }
 }
 
 // MARK: - JSON-RPC ID
 /// JSON-RPC ID can be string, number, or null
-public enum JSONRPCId: JSONSerializable, Hashable, Sendable {
+public enum JSONRPCId: JSONSerializable {
     case string(String)
     case number(Int)
     case null

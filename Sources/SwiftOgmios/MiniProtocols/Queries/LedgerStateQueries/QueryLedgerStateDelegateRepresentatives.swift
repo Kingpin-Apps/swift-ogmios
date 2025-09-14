@@ -30,7 +30,8 @@ public struct QueryLedgerStateDelegateRepresentatives {
         }
     }
     
-    public struct Params: JSONSerializable, Sendable {
+    // MARK: - Params
+    public struct Params: JSONSerializable {
         public let scripts: [AnyDelegateRepresentativeCredential]
         public let keys: [AnyDelegateRepresentativeCredential]
     }
@@ -92,7 +93,7 @@ public struct QueryLedgerStateDelegateRepresentatives {
             client.logResponseError(response: response)
             throw OgmiosError
                 .responseError(
-                    "Ogmios returned an error: \(String(describing: response.error?.message))"
+                    "Ogmios returned an error: \(String(describing: response.error.message))"
                 )
         }
         

@@ -3,7 +3,7 @@ import Foundation
 public struct QueryLedgerStateEraMismatch: JSONRPCResponseError {
     public let jsonrpc: String
     public let method: String
-    public let error: QueryLedgerStateEraMismatchError?
+    public let error: QueryLedgerStateEraMismatchError
     public let id: JSONRPCId?
     
     public struct QueryLedgerStateEraMismatchData: Codable, Hashable, Sendable {

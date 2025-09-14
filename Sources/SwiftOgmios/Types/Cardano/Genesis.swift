@@ -4,7 +4,7 @@ import PotentCodables
 // MARK: - Genesis Configurations
 
 /// Byron genesis configuration, with information used to bootstrap the era.
-public struct GenesisConfigurationByron: Codable, Sendable {
+public struct GenesisConfigurationByron: JSONSerializable {
     public let era: String
     public let genesisKeyHashes: [String] // Digest<Blake2b, 224>
     public let genesisDelegations: [String: BootstrapOperationalCertificate]
@@ -35,7 +35,7 @@ public struct GenesisConfigurationByron: Codable, Sendable {
 }
 
 /// Shelley genesis configuration, with information used to bootstrap the era.
-public struct GenesisConfigurationShelley: Codable, Sendable {
+public struct GenesisConfigurationShelley: JSONSerializable {
     public let era: String
     public let startTime: String // UTC time string
     public let networkMagic: NetworkMagic
@@ -80,7 +80,7 @@ public struct GenesisConfigurationShelley: Codable, Sendable {
 }
 
 /// Alonzo genesis configuration, with information used to bootstrap the era.
-public struct GenesisConfigurationAlonzo: Codable, Sendable {
+public struct GenesisConfigurationAlonzo: JSONSerializable {
     public let era: String
     public let updatableParameters: AlonzoUpdatableParameters
     
@@ -91,7 +91,7 @@ public struct GenesisConfigurationAlonzo: Codable, Sendable {
 }
 
 /// Conway genesis configuration, with information used to bootstrap the era.
-public struct GenesisConfigurationConway: Codable, Sendable {
+public struct GenesisConfigurationConway: JSONSerializable {
     public let era: String
     public let constitution: Constitution
     public let constitutionalCommittee: ConstitutionalCommitteeGenesis
@@ -108,48 +108,48 @@ public struct GenesisConfigurationConway: Codable, Sendable {
 // MARK: - Supporting Types
 
 /// Bootstrap operational certificate for Byron era
-public struct BootstrapOperationalCertificate: Codable, Sendable {
+public struct BootstrapOperationalCertificate: JSONSerializable {
     public let issuer: VerificationKeyWrapper
     public let delegate: VerificationKeyWrapper
 }
 
 /// Verification key wrapper
-public struct VerificationKeyWrapper: Codable, Sendable {
+public struct VerificationKeyWrapper: JSONSerializable {
     public let verificationKey: String
 }
 
 /// Initial delegate in Shelley genesis
-public struct InitialDelegate: Codable, Sendable {
+public struct InitialDelegate: JSONSerializable {
     public let issuer: IdWrapper
     public let delegate: DelegateInfo
 }
 
 /// ID wrapper
-public struct IdWrapper: Codable, Sendable {
+public struct IdWrapper: JSONSerializable {
     public let id: String
 }
 
 /// Delegate information
-public struct DelegateInfo: Codable, Sendable {
+public struct DelegateInfo: JSONSerializable {
     public let id: String
     public let vrfVerificationKeyHash: String
 }
 
 /// Genesis stake pools configuration
-public struct GenesisStakePools: Codable, Sendable {
+public struct GenesisStakePools: JSONSerializable {
     public let stakePools: [String: String] // Empty in test data
     public let delegators: [String: String] // Empty in test data
 }
 
 /// Byron protocol parameters
-public struct ByronProtocolParameters: Codable, Sendable {
+public struct ByronProtocolParameters: JSONSerializable {
     // Byron-specific parameters - for now keeping it flexible
     // The actual JSON response has many Byron-specific fields
 }
 
 
 /// Alonzo updatable parameters
-public struct AlonzoUpdatableParameters: Codable, Sendable {
+public struct AlonzoUpdatableParameters: JSONSerializable {
     public let minUtxoDepositCoefficient: UInt64
     public let collateralPercentage: UInt64
     public let plutusCostModels: [String: [Int]] // Cost models as dictionary
@@ -161,13 +161,13 @@ public struct AlonzoUpdatableParameters: Codable, Sendable {
 }
 
 /// Constitutional committee genesis configuration
-public struct ConstitutionalCommitteeGenesis: Codable, Sendable {
+public struct ConstitutionalCommitteeGenesis: JSONSerializable {
     public let members: [ConstitutionalCommitteeMemberSummary]
     public let quorum: Ratio
 }
 
 /// Conway updatable parameters
-public struct ConwayUpdatableParameters: Codable, Sendable {
+public struct ConwayUpdatableParameters: JSONSerializable {
     public let stakePoolVotingThresholds: SwiftOgmios.StakePoolVotingThresholds
     public let constitutionalCommitteeMinSize: UInt64
     public let constitutionalCommitteeMaxTermLength: UInt64
@@ -193,7 +193,7 @@ public typealias GenesisDelegateRepresentativeVotingThresholds = SwiftOgmios.Del
 public typealias NetworkMagic = UInt32
 
 /// Network target (mainnet or testnet)
-public enum Network: String, Codable, Sendable {
+public enum Network: String, JSONSerializable {
     case mainnet
     case testnet
 }

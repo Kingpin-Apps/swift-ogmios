@@ -41,6 +41,6 @@ public struct DigestBlake2b224: StringCallable {
 }
 
 
-public struct Guardrails: Codable, Sendable {
+public struct Guardrails: JSONSerializable {
     public let hash: DigestBlake2b224
 }

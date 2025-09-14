@@ -1,7 +1,7 @@
 // MARK: - Supporting Types
 
 /// Reference script fee structure
-public struct MinFeeReferenceScripts: Codable, Sendable {
+public struct MinFeeReferenceScripts: JSONSerializable {
     public let range: UInt32
     public let base: Double
     public let multiplier: Double
@@ -14,7 +14,7 @@ public struct MinFeeReferenceScripts: Codable, Sendable {
 }
 
 /// Execution units for script execution
-public struct ExecutionUnits: Codable, Sendable {
+public struct ExecutionUnits: JSONSerializable {
     public let memory: UInt64
     public let cpu: UInt64
     
@@ -25,7 +25,7 @@ public struct ExecutionUnits: Codable, Sendable {
 }
 
 /// Script execution pricing
-public struct ScriptExecutionPrices: Codable, Sendable {
+public struct ScriptExecutionPrices: JSONSerializable {
     public let memory: Ratio
     public let cpu: Ratio
     
@@ -36,7 +36,7 @@ public struct ScriptExecutionPrices: Codable, Sendable {
 }
 
 /// Cost models for Plutus scripts
-public struct CostModels: Codable, Sendable {
+public struct CostModels: JSONSerializable {
     // This would typically contain cost model parameters for different Plutus versions
     // The exact structure depends on the specific cost models used
     // Keys match the Language enum from the schema: "plutus:v1", "plutus:v2", "plutus:v3"
@@ -72,7 +72,7 @@ public struct CostModels: Codable, Sendable {
 }
 
 /// Stake pool voting thresholds
-public struct StakePoolVotingThresholds: Codable, Sendable {
+public struct StakePoolVotingThresholds: JSONSerializable {
     public let noConfidence: Ratio
     public let constitutionalCommittee: ConstitutionalCommitteeThresholds
     public let hardForkInitiation: Ratio
@@ -87,7 +87,7 @@ public struct StakePoolVotingThresholds: Codable, Sendable {
 }
 
 /// Constitutional committee thresholds
-public struct ConstitutionalCommitteeThresholds: Codable, Sendable {
+public struct ConstitutionalCommitteeThresholds: JSONSerializable {
     public let `default`: Ratio
     public let stateOfNoConfidence: Ratio
     
@@ -98,7 +98,7 @@ public struct ConstitutionalCommitteeThresholds: Codable, Sendable {
 }
 
 /// Protocol parameters update thresholds for stake pools
-public struct ProtocolParametersUpdateThresholds: Codable, Sendable {
+public struct ProtocolParametersUpdateThresholds: JSONSerializable {
     public let security: Ratio
     
     public init(security: Ratio) {
@@ -107,7 +107,7 @@ public struct ProtocolParametersUpdateThresholds: Codable, Sendable {
 }
 
 /// Protocol parameters update thresholds for DReps
-public struct DelegateRepresentativeProtocolParametersUpdateThresholds: Codable, Sendable {
+public struct DelegateRepresentativeProtocolParametersUpdateThresholds: JSONSerializable {
     public let network: Ratio
     public let economic: Ratio
     public let technical: Ratio
@@ -122,7 +122,7 @@ public struct DelegateRepresentativeProtocolParametersUpdateThresholds: Codable,
 }
 
 /// Delegate representative voting thresholds
-public struct DelegateRepresentativeVotingThresholds: Codable, Sendable {
+public struct DelegateRepresentativeVotingThresholds: JSONSerializable {
     public let noConfidence: Ratio
     public let constitutionalCommittee: ConstitutionalCommitteeThresholds
     public let constitution: Ratio
@@ -141,7 +141,7 @@ public struct DelegateRepresentativeVotingThresholds: Codable, Sendable {
 }
 
 /// Protocol version
-public struct ProtocolVersion: Codable, Sendable {
+public struct ProtocolVersion: JSONSerializable {
     public let major: UInt32
     public let minor: UInt32
     public let patch: UInt32?
@@ -159,7 +159,7 @@ public typealias Nonce = String
 // MARK: - Main Type
 
 /// Proposed protocol parameters that can be updated through governance
-public struct ProposedProtocolParameters: Codable, Sendable {
+public struct ProposedProtocolParameters: JSONSerializable {
     
     // Fee parameters
     public let minFeeCoefficient: UInt64?

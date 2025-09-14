@@ -43,7 +43,7 @@ public struct QueryLedgerStateConstitutionalCommittee {
         }
     }
     
-    public struct Result: JSONSerializable, Sendable {
+    public struct Result: JSONSerializable {
         public let members: [ConstitutionalCommitteeMember]
         public let quorum: Ratio?
         
@@ -95,7 +95,7 @@ public struct QueryLedgerStateConstitutionalCommittee {
             client.logResponseError(response: response)
             throw OgmiosError
                 .responseError(
-                    "Ogmios returned an error: \(String(describing: response.error?.message))"
+                    "Ogmios returned an error: \(String(describing: response.error.message))"
                 )
         }
         

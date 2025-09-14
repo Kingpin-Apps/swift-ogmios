@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - DelegateRepresentativeSummary
-public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
+public enum DelegateRepresentativeSummary: JSONSerializable {
     case registered(Registered)
     case noConfidence(NoConfidence)
     case abstain(Abstain)
@@ -14,7 +14,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
         }
     }
     
-    public struct Registered: Codable, Sendable {
+    public struct Registered: JSONSerializable {
         /// A special delegate representative which always abstain.
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
@@ -49,7 +49,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
         }
     }
     
-    public struct Abstain: Codable, Sendable {
+    public struct Abstain: JSONSerializable {
         /// A special delegate representative which always abstain.
         public let type: String
         public let stake: ValueAdaOnly
@@ -66,7 +66,7 @@ public enum DelegateRepresentativeSummary: JSONSerializable, Sendable {
         }
     }
     
-    public struct NoConfidence: Codable, Sendable {
+    public struct NoConfidence: JSONSerializable {
         /// A special delegate representative which always vote no, except on votes of no-confidence.
         public let type: String
         public let stake: ValueAdaOnly

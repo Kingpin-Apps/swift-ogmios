@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Health
-public struct Health: JSONSerializable, Sendable {
+public struct Health: JSONSerializable {
     public let startTime: String
     public let lastKnownTip: LastKnownTip
     public let lastTipUpdate: String
@@ -28,7 +28,7 @@ public struct Health: JSONSerializable, Sendable {
 }
 
 // MARK: - LastKnownTip
-public struct LastKnownTip: Codable, Sendable {
+public struct LastKnownTip: JSONSerializable {
     public let slot: Int
     public let id: String
     public let height: Int
@@ -41,7 +41,7 @@ public struct LastKnownTip: Codable, Sendable {
 }
 
 // MARK: - Metrics
-public struct Metrics: Codable, Sendable {
+public struct Metrics: JSONSerializable {
     public let activeConnections: Int
     public let runtimeStats: RuntimeStats
     public let sessionDurations: SessionDurations
@@ -58,7 +58,7 @@ public struct Metrics: Codable, Sendable {
 }
 
 // MARK: - RuntimeStats
-public struct RuntimeStats: Codable, Sendable {
+public struct RuntimeStats: JSONSerializable {
     public let cpuTime, currentHeapSize, gcCPUTime, maxHeapSize: Int
 
     public enum CodingKeys: String, CodingKey {
@@ -76,7 +76,7 @@ public struct RuntimeStats: Codable, Sendable {
 }
 
 // MARK: - SessionDurations
-public struct SessionDurations: Codable, Sendable {
+public struct SessionDurations: JSONSerializable {
     public let max, min: Int
     public let mean: Double
 

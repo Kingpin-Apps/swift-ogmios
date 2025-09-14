@@ -2,7 +2,7 @@ import Foundation
 
 /// Details about how rewards are calculated for the ongoing epoch.
 /// Contains information about stake pool performances and related metrics.
-public struct StakePoolsPerformances: Codable, Sendable {
+public struct StakePoolsPerformances: JSONSerializable {
     /// Desired number of stake pools
     public let desiredNumberOfStakePools: UInt64
     
@@ -86,7 +86,7 @@ public struct StakePoolsPerformances: Codable, Sendable {
 }
 
 /// Summary of a stake pool's performance metrics
-public struct StakePoolSummary: Codable, Sendable {
+public struct StakePoolSummary: JSONSerializable {
     /// The stake pool identifier
     public let id: StakePoolId
     
@@ -118,7 +118,7 @@ public struct StakePoolSummary: Codable, Sendable {
 }
 
 /// Parameters of a stake pool relevant for reward calculations
-public struct StakePoolParameters: Codable, Sendable {
+public struct StakePoolParameters: JSONSerializable {
     /// Fixed cost per epoch
     public let cost: ValueAdaOnly
     

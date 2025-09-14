@@ -14,17 +14,4 @@ public struct EncodingBase16: StringCallable {
         
         self.value = value
     }
-    
-    // For JSON decoding
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let valueValue = try container.decode(String.self)
-        try self.init(valueValue)
-    }
-    
-    // For JSON encoding
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(value)
-    }
 }

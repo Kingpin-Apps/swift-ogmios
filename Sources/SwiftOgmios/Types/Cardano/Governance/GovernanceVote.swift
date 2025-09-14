@@ -1,31 +1,20 @@
-//
-//  
-//  Product: SwiftOgmios
-//  Project: SwiftOgmios
-//  Package: SwiftOgmios
-//  
-//  Created by Hareem Adderley on 10/09/2025 AT 5:35 PM
-//  Copyright © 2025 Kingpin Apps. All rights reserved.
-//  
-
-
 
 /// A vote on a governance proposal. The 'anchor' is optional and 'proposal' is only present from Conway onwards.
 /// Before Conway, a vote would always refer to all proposals part of the same transaction.
-public struct GovernanceVote: Codable, Sendable {
+public struct GovernanceVote: JSONSerializable {
     public let issuer: GovernanceVoter
     public let metadata: Anchor?
     public let vote: VoteChoice
     public let proposal: GovernanceProposalReference?
 }
 
-public enum VoteChoice: String, Codable, Sendable {
+public enum VoteChoice: String, JSONSerializable {
     case yes
     case no
     case abstain
 }
 
-public enum GovernanceVoter: JSONSerializable, Sendable {
+public enum GovernanceVoter: JSONSerializable {
     case genesisDelegate(GenesisDelegate)
     case constitutionalCommittee(ConstitutionalCommittee)
     case delegateRepresentative(DelegateRepresentative)
@@ -44,7 +33,7 @@ public enum GovernanceVoter: JSONSerializable, Sendable {
         }
     }
     
-    public struct GenesisDelegate: Codable, Sendable {
+    public struct GenesisDelegate: JSONSerializable {
         public let role: String
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
@@ -63,7 +52,7 @@ public enum GovernanceVoter: JSONSerializable, Sendable {
         }
     }
     
-    public struct ConstitutionalCommittee: Codable, Sendable {
+    public struct ConstitutionalCommittee: JSONSerializable {
         public let role: String
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
@@ -82,7 +71,7 @@ public enum GovernanceVoter: JSONSerializable, Sendable {
         }
     }
     
-    public struct DelegateRepresentative: Codable, Sendable {
+    public struct DelegateRepresentative: JSONSerializable {
         public let role: String
         public let id: DigestBlake2b224
         public let from: CredentialOrigin
@@ -101,7 +90,7 @@ public enum GovernanceVoter: JSONSerializable, Sendable {
         }
     }
     
-    public struct StakePoolOperator: Codable, Sendable {
+    public struct StakePoolOperator: JSONSerializable {
         public let role: String
         public let id: StakePoolId
         
