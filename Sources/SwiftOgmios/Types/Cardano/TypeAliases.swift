@@ -16,6 +16,9 @@ public typealias DigestAny = String
 /// This should be (at least) the number of slots in which we are guaranteed to have k blocks.
 public typealias SafeZone = UInt64
 
+/// A Blake2b 32-byte hash digest of a transaction body
+public typealias TransactionId = String
+
 public enum CredentialOrigin : String, JSONSerializable {
     case verificationKey
     case script
@@ -33,6 +36,21 @@ public struct Members: JSONSerializable {
 
 public struct EpochWrapper: JSONSerializable {
     public let epoch: Epoch
+}
+
+public struct TransactionIdWrapper: JSONSerializable {
+    public let id: String
+    
+    public init(_ id: String) throws {
+        guard id.count == 64 else {
+            throw OgmiosError
+                .invalidLength(
+                    "TransactionId must be exactly 64 characters, got \(id.count)"
+                )
+        }
+        
+        self.id = id
+    }
 }
 
 /// A ratio of two integers, to express exact fractions.

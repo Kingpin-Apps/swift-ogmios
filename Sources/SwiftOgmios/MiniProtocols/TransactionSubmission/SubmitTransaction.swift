@@ -54,7 +54,7 @@ public struct SubmitTransaction {
     
     // MARK: - Result
     public struct Result: JSONSerializable {
-        public let transaction: TransactionId
+        public let transaction: TransactionIdWrapper
     }
     
     // MARK: - Public Methods

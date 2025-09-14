@@ -333,5 +333,9 @@ extension OgmiosClient {
         public var acquireMempool: AcquireMempool {
             return AcquireMempool(client: self.client)
         }
+        
+        public var nextTransaction: NextTransaction {
+            return NextTransaction(client: self.client)
+        }
     }
 }

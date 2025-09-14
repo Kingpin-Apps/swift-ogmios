@@ -1725,3 +1725,17 @@ let acquireMempool = """
     "id": null
 }
 """.data(using: .utf8)!
+
+
+let nextTransaction = """
+{
+  "jsonrpc": "2.0",
+  "method": "nextTransaction",
+  "result": {
+    "transaction": {
+      "id": "a3edaf9627d81c28a51a729b370f97452f485c70b8ac9dca15791e0ae26618ae"
+    }
+  },
+  "id": null
+}
+""".data(using: .utf8)!

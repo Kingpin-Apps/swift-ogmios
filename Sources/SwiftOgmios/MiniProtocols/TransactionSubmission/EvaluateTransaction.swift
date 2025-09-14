@@ -29,10 +29,10 @@ public struct EvaluateTransaction {
     
     // MARK: - Params
     public struct Params: JSONSerializable {
-        public let transaction: Transaction
+        public let transaction: TransactionCBOR
         public let additionalUtxo: Utxo?
         
-        init(transaction: Transaction, additionalUtxo: Utxo? = nil) {
+        init(transaction: TransactionCBOR, additionalUtxo: Utxo? = nil) {
             self.transaction = transaction
             self.additionalUtxo = additionalUtxo
         }
