@@ -1,6 +1,5 @@
 import Foundation
 import Network
-import PotentCodables
 
 public let JSONRPCVersion = "2.0"
 

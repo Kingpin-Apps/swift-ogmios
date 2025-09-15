@@ -55,6 +55,11 @@ public struct QueryLedgerStateRewardAccountSummaries {
     }
     
     // MARK: - Public Methods
+    public func result(id: JSONRPCId? = nil, params: Params) async throws -> [RewardAccountSummary] {
+        let response = try await self.execute(id: id, params: params)
+        return response.result
+    }
+    
     public func execute(id: JSONRPCId? = nil, params: Params) async throws -> Response {
         let data = try await self.send(id: id, params: params)
         return try await self.process(data: data)

@@ -8,14 +8,22 @@ public enum InputSource: String, Codable, Sendable, Equatable, Hashable {
 }
 
 // MARK: - Signatory
-/// A transaction signatory
+/// A signatory (EdDSA) for the transaction. The fields 'chainCode' and 'addressAttributes' are only present on bootstrap signatures (when spending from a Byron/Bootstrap address).
 public struct Signatory: Codable, Sendable, Equatable, Hashable {
-    public let signature: String
-    public let key: String
+    /// An Ed25519 verification key
+    public let key: VerificationKey
+    /// An EdDSA signature
+    public let signature: Signature
+    /// An Ed25519-BIP32 chain-code for key deriviation (only present on bootstrap signatures)
+    public let chainCode: ChainCode?
+    /// Extra attributes carried by Byron addresses (network magic and/or HD payload) (only present on bootstrap signatures)
+    public let addressAttributes: AddressAttributes?
     
-    public init(signature: String, key: String) {
-        self.signature = signature
+    public init(key: VerificationKey, signature: Signature, chainCode: ChainCode? = nil, addressAttributes: AddressAttributes? = nil) {
         self.key = key
+        self.signature = signature
+        self.chainCode = chainCode
+        self.addressAttributes = addressAttributes
     }
 }
 
@@ -41,22 +49,102 @@ public struct SimpleRedeemer: Codable, Sendable, Equatable, Hashable {
     }
 }
 
+// MARK: - Treasury
+/// Treasury objects for the transaction
+public struct Treasury: Codable, Sendable, Equatable, Hashable {
+    /// Value in the treasury
+    public let value: ValueAdaOnly?
+    /// Donation value
+    public let donation: ValueAdaOnly?
+    
+    public init(value: ValueAdaOnly? = nil, donation: ValueAdaOnly? = nil) {
+        self.value = value
+        self.donation = donation
+    }
+}
+
 // MARK: - Transaction
-/// A complete transaction (simplified for NextTransaction responses)
+/// A complete transaction as defined in the Cardano JSON schema
 public struct Transaction: Codable, Sendable, Equatable, Hashable {
+    /// Transaction Id (A Blake2b 32-byte hash digest of a transaction body) - REQUIRED
     public let id: TransactionId
-    public let spends: InputSource?
-    public let inputs: [TransactionOutputReference]?
-    public let outputs: [TransactionOutput]?
-    public let signatories: [Signatory]?
+    /// Input source - how inputs are consumed (by inputs or collaterals) - REQUIRED
+    public let spends: InputSource
+    /// Array of transaction input references - REQUIRED
+    public let inputs: [TransactionOutputReference]
+    /// Optional array of reference inputs (UTxO outputs referenced but not spent)
+    public let references: [TransactionOutputReference]?
+    /// Optional collaterals used for script validation
+    public let collaterals: [TransactionOutputReference]?
+    /// Total collateral value
+    public let totalCollateral: ValueAdaOnly?
+    /// Return output for collateral
+    public let collateralReturn: TransactionOutput?
+    /// Array of transaction outputs - REQUIRED
+    public let outputs: [TransactionOutput]
+    /// Certificates involved in this transaction
+    public let certificates: [Certificate]?
+    /// Withdrawals included in the transaction
+    public let withdrawals: Withdrawals?
+    /// Transaction fee
+    public let fee: ValueAdaOnly?
+    /// Validity interval defining before and after which slots the transaction is invalid
+    public let validityInterval: ValidityInterval?
+    /// Minted assets
+    public let mint: Assets?
+    /// Network identifier (A network target, as defined since the Shelley era)
+    public let network: Network?
+    /// Script integrity hash (for scripts validation)
+    public let scriptIntegrityHash: DigestBlake2b256?
+    /// Required extra signatories (hashes)
+    public let requiredExtraSignatories: [DigestBlake2b224]?
+    /// Required extra scripts (hashes)
+    public let requiredExtraScripts: [DigestBlake2b224]?
+    /// Governance proposals included
+    public let proposals: [GovernanceProposal]?
+    /// Governance votes included
+    public let votes: [GovernanceVote]?
+    /// Metadata associated with the transaction
+    public let metadata: Metadata?
+    /// Signatories for this transaction - REQUIRED
+    public let signatories: [Signatory]
+    /// Scripts included in the transaction (keyed by hex string)
+    public let scripts: [String: Script]?
+    /// Datums indexed by hash (keyed by hex string)
+    public let datums: [String: Datum]?
+    /// Redeemers used for script validation
+    public let redeemers: [Redeemer]?
+    /// Treasury objects for the transaction
+    public let treasury: Treasury?
+    /// The raw serialized (CBOR) transaction, as found on-chain. Use --include-transaction-cbor to ALWAYS include the 'cbor' field. Omitted otherwise.
     public let cbor: String?
     
     public init(
         id: TransactionId,
-        spends: InputSource? = nil,
-        inputs: [TransactionOutputReference]? = nil,
-        outputs: [TransactionOutput]? = nil,
-        signatories: [Signatory]? = nil,
+        spends: InputSource,
+        inputs: [TransactionOutputReference],
+        outputs: [TransactionOutput],
+        signatories: [Signatory],
+        references: [TransactionOutputReference]? = nil,
+        collaterals: [TransactionOutputReference]? = nil,
+        totalCollateral: ValueAdaOnly? = nil,
+        collateralReturn: TransactionOutput? = nil,
+        certificates: [Certificate]? = nil,
+        withdrawals: Withdrawals? = nil,
+        fee: ValueAdaOnly? = nil,
+        validityInterval: ValidityInterval? = nil,
+        mint: Assets? = nil,
+        network: Network? = nil,
+        scriptIntegrityHash: DigestBlake2b256? = nil,
+        requiredExtraSignatories: [DigestBlake2b224]? = nil,
+        requiredExtraScripts: [DigestBlake2b224]? = nil,
+        proposals: [GovernanceProposal]? = nil,
+        votes: [GovernanceVote]? = nil,
+        metadata: Metadata? = nil,
+        scripts: [String: Script]? = nil,
+        datums: [String: Datum]? = nil,
+        redeemers: [Redeemer]? = nil,
+        treasury: Treasury? = nil,
         cbor: String? = nil
     ) {
         self.id = id
@@ -64,6 +152,26 @@ public struct Transaction: Codable, Sendable, Equatable, Hashable {
         self.inputs = inputs
         self.outputs = outputs
         self.signatories = signatories
+        self.references = references
+        self.collaterals = collaterals
+        self.totalCollateral = totalCollateral
+        self.collateralReturn = collateralReturn
+        self.certificates = certificates
+        self.withdrawals = withdrawals
+        self.fee = fee
+        self.validityInterval = validityInterval
+        self.mint = mint
+        self.network = network
+        self.scriptIntegrityHash = scriptIntegrityHash
+        self.requiredExtraSignatories = requiredExtraSignatories
+        self.requiredExtraScripts = requiredExtraScripts
+        self.proposals = proposals
+        self.votes = votes
+        self.metadata = metadata
+        self.scripts = scripts
+        self.datums = datums
+        self.redeemers = redeemers
+        self.treasury = treasury
         self.cbor = cbor
     }
 }

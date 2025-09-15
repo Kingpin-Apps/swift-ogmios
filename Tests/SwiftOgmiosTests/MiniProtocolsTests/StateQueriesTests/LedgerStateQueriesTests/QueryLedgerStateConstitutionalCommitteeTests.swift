@@ -17,19 +17,19 @@ import Testing
     let constitutionalCommitteeHTTP = try await httpClient
         .ledgerStateQuery
         .constitutionalCommittee
-        .execute(
+        .result(
             id: JSONRPCId.generateNextNanoId()
         )
     let constitutionalCommitteenWS = try await wsClient
         .ledgerStateQuery
         .constitutionalCommittee
-        .execute(
+        .result(
             id: JSONRPCId.generateNextNanoId()
         )
     
-    #expect(constitutionalCommitteeHTTP.result.members.count == 1)
-    #expect(constitutionalCommitteenWS.result.members.count == 1)
+    #expect(constitutionalCommitteeHTTP.members.count == 1)
+    #expect(constitutionalCommitteenWS.members.count == 1)
     
-    #expect(constitutionalCommitteeHTTP.result.quorum!() == "2/3")
-    #expect(constitutionalCommitteenWS.result.quorum!() == "2/3")
+    #expect(constitutionalCommitteeHTTP.quorum!() == "2/3")
+    #expect(constitutionalCommitteenWS.quorum!() == "2/3")
 }

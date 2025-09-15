@@ -15,23 +15,23 @@ import Testing
     let utxoHTTP = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            wholeUtxo: true,
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            wholeUtxo: true
         )
     let utxoWS = try await wsClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            wholeUtxo: true,
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            wholeUtxo: true
         )
     
-    #expect(utxoHTTP.result.count == 3)
-    #expect(utxoWS.result.count == 3)
+    #expect(utxoHTTP.count == 3)
+    #expect(utxoWS.count == 3)
     
     // Test first UTXO entry (simple ADA only)
-    let firstUtxo = utxoHTTP.result[0]
+    let firstUtxo = utxoHTTP[0]
     #expect(firstUtxo.transaction.id == "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
     #expect(firstUtxo.index == 0)
     #expect(firstUtxo.address.value == "addr_test1qz66ue36465w2qq40005h2hadad6pnjht8mu6sgplsfj74qdjnshguewlx4ww0eet26y2pal4xpav5prcydf28cvxtjqx46x7f")
@@ -42,7 +42,7 @@ import Testing
     #expect(firstUtxo.script == nil)
     
     // Test second UTXO entry (with native assets and datum hash)
-    let secondUtxo = utxoHTTP.result[1]
+    let secondUtxo = utxoHTTP[1]
     #expect(secondUtxo.transaction.id == "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890")
     #expect(secondUtxo.index == 1)
     #expect(secondUtxo.value.ada.lovelace == 5000000)
@@ -53,7 +53,7 @@ import Testing
     #expect(secondUtxo.script == nil)
     
     // Test third UTXO entry (with script)
-    let thirdUtxo = utxoHTTP.result[2]
+    let thirdUtxo = utxoHTTP[2]
     #expect(thirdUtxo.transaction.id == "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321")
     #expect(thirdUtxo.index == 2)
     #expect(thirdUtxo.value.ada.lovelace == 10000000)
@@ -84,12 +84,12 @@ import Testing
     let utxoByRefs = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            outputReferences: [outputRef],
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            outputReferences: [outputRef]
         )
     
-    #expect(utxoByRefs.result.count == 3) // Mock returns all 3, but in real usage would filter
+    #expect(utxoByRefs.count == 3) // Mock returns all 3, but in real usage would filter
     
     // Test with specific addresses
     let addresses = [
@@ -100,12 +100,12 @@ import Testing
     let utxoByAddresses = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            addresses: addresses,
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            addresses: addresses
         )
     
-    #expect(utxoByAddresses.result.count == 3) // Mock returns all 3, but in real usage would filter
+    #expect(utxoByAddresses.count == 3) // Mock returns all 3, but in real usage would filter
 }
 
 @Test func testQueryLedgerStateUtxoParams() async throws {
@@ -118,12 +118,12 @@ import Testing
     let utxoWithParams = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            params: .wholeUtxo,
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            params: .wholeUtxo
         )
     
-    #expect(utxoWithParams.result.count == 3)
+    #expect(utxoWithParams.count == 3)
     
     // Test with output references params
     let outputRef = TransactionOutputReference(
@@ -136,12 +136,12 @@ import Testing
     let utxoWithRefParams = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            params: .outputReferences([outputRef]),
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            params: .outputReferences([outputRef])
         )
     
-    #expect(utxoWithRefParams.result.count == 3)
+    #expect(utxoWithRefParams.count == 3)
     
     // Test with address params
     let addresses = [Address("addr_test1qz66ue36465w2qq40005h2hadad6pnjht8mu6sgplsfj74qdjnshguewlx4ww0eet26y2pal4xpav5prcydf28cvxtjqx46x7f")]
@@ -149,10 +149,10 @@ import Testing
     let utxoWithAddrParams = try await httpClient
         .ledgerStateQuery
         .utxo
-        .execute(
-            params: .addresses(addresses),
-            id: JSONRPCId.generateNextNanoId()
+        .result(
+            id: JSONRPCId.generateNextNanoId(),
+            params: .addresses(addresses)
         )
     
-    #expect(utxoWithAddrParams.result.count == 3)
+    #expect(utxoWithAddrParams.count == 3)
 }

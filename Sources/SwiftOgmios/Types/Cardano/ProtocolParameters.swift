@@ -93,10 +93,10 @@ public struct ProtocolParameters: JSONSerializable {
     public let scriptExecutionPrices: ScriptExecutionPrices?
     
     /// Maximum execution units allowed per transaction
-    public let maxExecutionUnitsPerTransaction: ExecutionUnits?
+    public let maxExecutionUnitsPerTransaction: SwiftOgmios.ExecutionUnits?
     
     /// Maximum execution units allowed per block
-    public let maxExecutionUnitsPerBlock: ExecutionUnits?
+    public let maxExecutionUnitsPerBlock: SwiftOgmios.ExecutionUnits?
     
     // MARK: - Governance Parameters (Conway Era) (Optional)
     
@@ -156,8 +156,8 @@ public struct ProtocolParameters: JSONSerializable {
         maxCollateralInputs: UInt64? = nil,
         plutusCostModels: CostModels? = nil,
         scriptExecutionPrices: ScriptExecutionPrices? = nil,
-        maxExecutionUnitsPerTransaction: ExecutionUnits? = nil,
-        maxExecutionUnitsPerBlock: ExecutionUnits? = nil,
+        maxExecutionUnitsPerTransaction: SwiftOgmios.ExecutionUnits? = nil,
+        maxExecutionUnitsPerBlock: SwiftOgmios.ExecutionUnits? = nil,
         stakePoolVotingThresholds: StakePoolVotingThresholds? = nil,
         constitutionalCommitteeMinSize: UInt64? = nil,
         constitutionalCommitteeMaxTermLength: UInt64? = nil,

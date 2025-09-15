@@ -1,5 +1,4 @@
 import Foundation
-import SwiftCardanoCore
 
 /// Query the Ada value of the treasury and reserves of the protocol.
 public struct QueryLedgerStateTreasuryAndReserves {
@@ -48,6 +47,11 @@ public struct QueryLedgerStateTreasuryAndReserves {
     }
     
     // MARK: - Public Methods
+    public func result(id: JSONRPCId? = nil) async throws -> Result {
+        let response = try await self.execute(id: id)
+        return response.result
+    }
+    
     public func execute(id: JSONRPCId? = nil) async throws -> Response {
         let data = try await self.send(id: id)
         return try await self.process(data: data)

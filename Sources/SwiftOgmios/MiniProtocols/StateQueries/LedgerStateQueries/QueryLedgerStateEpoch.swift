@@ -42,6 +42,11 @@ public struct QueryLedgerStateEpoch {
     }
     
     // MARK: - Public Methods
+    public func result(id: JSONRPCId? = nil) async throws -> Epoch {
+        let response = try await self.execute(id: id)
+        return response.result
+    }
+    
     public func execute(id: JSONRPCId? = nil) async throws -> Response {
         let data = try await self.send(id: id)
         return try await self.process(data: data)

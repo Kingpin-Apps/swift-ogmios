@@ -1,6 +1,4 @@
 import Foundation
-import PotentCodables
-
 // MARK: - Genesis Configurations
 
 /// Byron genesis configuration, with information used to bootstrap the era.

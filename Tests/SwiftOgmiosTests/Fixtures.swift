@@ -94,6 +94,10 @@ public func mockSendRequest(json: String) async throws -> Data {
             return sizeOfMempool
         case "releaseMempool":
             return releaseMempool
+        case "findIntersection":
+            return findIntersection
+        case "nextBlock":
+            return nextBlock
         default:
             return Data()
     }

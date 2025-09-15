@@ -99,7 +99,12 @@ public struct QueryLedgerStateStakePools {
     }
     
     // MARK: - Public Methods
-    public func execute(params: Params? = nil, id: JSONRPCId? = nil) async throws -> Response {
+    public func result(id: JSONRPCId? = nil, params: Params? = nil) async throws -> [StakePoolId: StakePool] {
+        let response = try await self.execute(id: id, params: params)
+        return response.result
+    }
+    
+    public func execute(id: JSONRPCId? = nil, params: Params? = nil) async throws -> Response {
         let data = try await self.send(params: params, id: id)
         return try await self.process(data: data)
     }

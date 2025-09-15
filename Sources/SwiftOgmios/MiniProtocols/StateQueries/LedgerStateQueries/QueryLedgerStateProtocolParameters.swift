@@ -1,5 +1,4 @@
 import Foundation
-import SwiftCardanoCore
 
 /// Query the current protocol parameters.
 public struct QueryLedgerStateProtocolParameters {
@@ -42,6 +41,11 @@ public struct QueryLedgerStateProtocolParameters {
     }
     
     // MARK: - Public Methods
+    public func result(id: JSONRPCId? = nil) async throws -> ProtocolParameters {
+        let response = try await self.execute(id: id)
+        return response.result
+    }
+    
     public func execute(id: JSONRPCId? = nil) async throws -> Response {
         let data = try await self.send(id: id)
         return try await self.process(data: data)

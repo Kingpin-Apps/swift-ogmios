@@ -14,7 +14,7 @@ public struct MinFeeReferenceScripts: JSONSerializable {
 }
 
 /// Execution units for script execution
-public struct ExecutionUnits: JSONSerializable {
+public struct ExecutionUnits: Codable, Sendable, Equatable, Hashable {
     public let memory: UInt64
     public let cpu: UInt64
     
@@ -200,8 +200,8 @@ public struct ProposedProtocolParameters: JSONSerializable {
     // Script execution parameters
     public let plutusCostModels: CostModels?
     public let scriptExecutionPrices: ScriptExecutionPrices?
-    public let maxExecutionUnitsPerTransaction: ExecutionUnits?
-    public let maxExecutionUnitsPerBlock: ExecutionUnits?
+    public let maxExecutionUnitsPerTransaction: SwiftOgmios.ExecutionUnits?
+    public let maxExecutionUnitsPerBlock: SwiftOgmios.ExecutionUnits?
     
     // Governance parameters
     public let stakePoolVotingThresholds: StakePoolVotingThresholds?
@@ -241,8 +241,8 @@ public struct ProposedProtocolParameters: JSONSerializable {
         maxCollateralInputs: UInt64? = nil,
         plutusCostModels: CostModels? = nil,
         scriptExecutionPrices: ScriptExecutionPrices? = nil,
-        maxExecutionUnitsPerTransaction: ExecutionUnits? = nil,
-        maxExecutionUnitsPerBlock: ExecutionUnits? = nil,
+        maxExecutionUnitsPerTransaction: SwiftOgmios.ExecutionUnits? = nil,
+        maxExecutionUnitsPerBlock: SwiftOgmios.ExecutionUnits? = nil,
         stakePoolVotingThresholds: StakePoolVotingThresholds? = nil,
         constitutionalCommitteeMinSize: UInt64? = nil,
         constitutionalCommitteeMaxTermLength: UInt64? = nil,

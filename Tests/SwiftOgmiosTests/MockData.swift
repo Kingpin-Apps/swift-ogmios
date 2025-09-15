@@ -1781,3 +1781,47 @@ let releaseMempool = """
   "id": null
 }
 """.data(using: .utf8)!
+
+
+let findIntersection = """
+{
+  "jsonrpc": "2.0",
+  "method": "findIntersection",
+  "result": {
+    "intersection": {
+      "slot": 18446744073709552000,
+      "id": "c248757d390181c517a5beadc9c3fe64bf821d3e889a963fc717003ec248757d"
+    },
+    "tip": {
+      "slot": 18446744073709552000,
+      "id": "c248757d390181c517a5beadc9c3fe64bf821d3e889a963fc717003ec248757d",
+      "height": 18446744073709552000
+    }
+  },
+  "id": null
+}
+""".data(using: .utf8)!
+
+
+let nextBlock = """
+{
+  "jsonrpc": "2.0",
+  "method": "nextBlock",
+  "result": {
+    "direction": "forward",
+    "tip": {
+      "slot": 18446744073709552000,
+      "id": "c248757d390181c517a5beadc9c3fe64bf821d3e889a963fc717003ec248757d",
+      "height": 18446744073709552000
+    },
+    "block": {
+      "type": "ebb",
+      "era": "byron",
+      "id": "c248757d390181c517a5beadc9c3fe64bf821d3e889a963fc717003ec248757d",
+      "ancestor": "c248757d390181c517a5beadc9c3fe64bf821d3e889a963fc717003ec248757d",
+      "height": 18446744073709552000
+    }
+  },
+  "id": null
+}
+""".data(using: .utf8)!

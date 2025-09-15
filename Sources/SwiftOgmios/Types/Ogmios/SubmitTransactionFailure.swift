@@ -428,7 +428,7 @@ public struct SubmitTransactionFailureExecutionBudgetOutOfBounds: SubmitTransact
     public let data: ExecutionBudgetOutOfBoundsData
     
     public struct ExecutionBudgetOutOfBoundsData: JSONSerializable {
-        public let budgetUsed: ExecutionUnits
+        public let budgetUsed: SwiftOgmios.ExecutionUnits
     }
     
     init(code: Int = 3161, message: String, data: ExecutionBudgetOutOfBoundsData) {
@@ -646,7 +646,7 @@ public struct SubmitTransactionFailureExecutionUnitsTooLarge: SubmitTransactionF
     public let data: ExecutionUnitsTooLargeData
     
     public struct ExecutionUnitsTooLargeData: JSONSerializable {
-        public let providedExecutionUnits: ExecutionUnits
+        public let providedExecutionUnits: SwiftOgmios.ExecutionUnits
         public let maximumExecutionUnits: ExecutionUnits
     }
     

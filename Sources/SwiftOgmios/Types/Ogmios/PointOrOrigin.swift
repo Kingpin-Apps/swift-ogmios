@@ -1,14 +1,13 @@
 import Foundation
-import BigInt
 
 // MARK: - Point
-public struct Point: JSONSerializable, Sendable {
+public struct Point: JSONSerializable {
     public let slot: Slot
     public let id: DigestBlake2b256
 }
 
 // MARK: - PointOrOrigin
-public enum PointOrOrigin: JSONSerializable, Sendable {
+public enum PointOrOrigin: JSONSerializable {
     case point(Point)
     case origin(Origin)
     
@@ -66,6 +65,35 @@ public enum BlockHeightOrOrigin: JSONSerializable, Sendable {
         switch self {
             case .blockHeight(let blockHeight):
                 try container.encode(blockHeight)
+            case .origin(let origin):
+                try container.encode(origin)
+        }
+    }
+}
+
+// MARK: - TipOrOrigin
+public enum TipOrOrigin: JSONSerializable {
+    case tip(Tip)
+    case origin(Origin)
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let tip = try? container.decode(Tip.self) {
+            self = .tip(tip)
+            return
+        }
+        if let origin = try? container.decode(Origin.self) {
+            self = .origin(origin)
+            return
+        }
+        throw DecodingError.typeMismatch(TipOrOrigin.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for TipOrOrigin"))
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+            case .tip(let tip):
+                try container.encode(tip)
             case .origin(let origin):
                 try container.encode(origin)
         }

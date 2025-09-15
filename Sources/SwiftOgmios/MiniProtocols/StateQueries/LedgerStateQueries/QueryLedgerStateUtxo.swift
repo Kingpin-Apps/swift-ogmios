@@ -81,22 +81,29 @@ public struct QueryLedgerStateUtxo {
     }
     
     // MARK: - Public Methods
-    public func execute(params: Params? = nil, id: JSONRPCId? = nil) async throws -> Response {
+    public func result(id: JSONRPCId? = nil, params: Params? = nil) async throws -> Utxo {
+        let response = try await self.execute(id: id, params: params)
+        return response.result
+    }
+    
+    public func result(id: JSONRPCId? = nil, outputReferences: [TransactionOutputReference]) async throws -> Utxo {
+        let response = try await self.execute(id: id, params: .outputReferences(outputReferences))
+        return response.result
+    }
+    
+    public func result(id: JSONRPCId? = nil, addresses: [Address]) async throws -> Utxo {
+        let response = try await self.execute(id: id, params: .addresses(addresses))
+        return response.result
+    }
+    
+    public func result(id: JSONRPCId? = nil, wholeUtxo: Bool = true) async throws -> Utxo {
+        let response = try await self.execute(id: id, params: .wholeUtxo)
+        return response.result
+    }
+    
+    public func execute(id: JSONRPCId? = nil, params: Params? = nil) async throws -> Response {
         let data = try await self.send(params: params, id: id)
         return try await self.process(data: data)
-    }
-    
-    // Convenience methods for specific parameter types
-    public func execute(outputReferences: [TransactionOutputReference], id: JSONRPCId? = nil) async throws -> Response {
-        return try await execute(params: .outputReferences(outputReferences), id: id)
-    }
-    
-    public func execute(addresses: [Address], id: JSONRPCId? = nil) async throws -> Response {
-        return try await execute(params: .addresses(addresses), id: id)
-    }
-    
-    public func execute(wholeUtxo: Bool = true, id: JSONRPCId? = nil) async throws -> Response {
-        return try await execute(params: .wholeUtxo, id: id)
     }
     
     // MARK: - Private Methods

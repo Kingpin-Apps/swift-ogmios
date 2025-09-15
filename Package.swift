@@ -19,7 +19,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", .upToNextMinor(from: "0.1.32")),
-        .package(url: "https://github.com/KINGH242/PotentCodables.git", .upToNextMinor(from: "3.6.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,7 +26,6 @@ let package = Package(
         .target(
             name: "SwiftOgmios",
             dependencies: [
-                "PotentCodables",
                 .product(name: "SwiftCardanoCore", package: "swift-cardano-core"),
             ]
         ),
