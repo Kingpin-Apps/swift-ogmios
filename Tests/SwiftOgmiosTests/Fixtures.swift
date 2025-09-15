@@ -88,6 +88,12 @@ public func mockSendRequest(json: String) async throws -> Data {
             return acquireMempool
         case "nextTransaction":
             return nextTransaction
+        case "hasTransaction":
+            return hasTransaction
+        case "sizeOfMempool":
+            return sizeOfMempool
+        case "releaseMempool":
+            return releaseMempool
         default:
             return Data()
     }

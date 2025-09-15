@@ -1739,3 +1739,45 @@ let nextTransaction = """
   "id": null
 }
 """.data(using: .utf8)!
+
+
+let hasTransaction = """
+{
+  "jsonrpc": "2.0",
+  "method": "hasTransaction",
+  "result": true,
+  "id": null
+}
+""".data(using: .utf8)!
+
+
+let sizeOfMempool = """
+{
+  "jsonrpc": "2.0",
+  "method": "sizeOfMempool",
+  "result": {
+    "maxCapacity": {
+      "bytes": 18446744073709552000
+    },
+    "currentSize": {
+      "bytes": 18446744073709552000
+    },
+    "transactions": {
+      "count": 4294967295
+    }
+  },
+  "id": null
+}
+""".data(using: .utf8)!
+
+
+let releaseMempool = """
+{
+  "jsonrpc": "2.0",
+  "method": "releaseMempool",
+  "result": {
+    "released": "mempool"
+  },
+  "id": null
+}
+""".data(using: .utf8)!

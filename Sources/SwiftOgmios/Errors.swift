@@ -11,6 +11,7 @@ enum OgmiosError: Error, CustomStringConvertible, Equatable {
     case invalidMethodError(String?)
     case invalidResponse(String?)
     case responseError(String?)
+    case timeoutError(String?)
     case websocketError(String?)
     
     var description: String {
@@ -35,6 +36,8 @@ enum OgmiosError: Error, CustomStringConvertible, Equatable {
                 return message ?? "Invalid response error"
             case .responseError(let message):
                 return message ?? "Ogmios response error"
+            case .timeoutError(let message):
+                return message ?? "Ogmios timeout error"
             case .websocketError(let message):
                 return message ?? "Websocket response error"
         }

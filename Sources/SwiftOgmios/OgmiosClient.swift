@@ -334,8 +334,62 @@ extension OgmiosClient {
             return AcquireMempool(client: self.client)
         }
         
+        public var hasTransaction: HasTransaction {
+            return HasTransaction(client: self.client)
+        }
+        
         public var nextTransaction: NextTransaction {
             return NextTransaction(client: self.client)
+        }
+        
+        public var releaseMempool: ReleaseMempool {
+            return ReleaseMempool(client: self.client)
+        }
+        
+        public var sizeOfMempool: SizeOfMempool {
+            return SizeOfMempool(client: self.client)
+        }
+        
+        /// Get the contents of the mempool
+        public func getMempoolTransactions() async throws -> [NextTransactionResult] {
+            let _ = try await acquireMempool.execute()
+            
+            var transactions: [NextTransactionResult] = []
+            while true {
+                let response = try await nextTransaction.execute(
+                    id: JSONRPCId.generateNextNanoId()
+                )
+                
+                if case .noMoreTransactions = response.result.transaction {
+                    break
+                } else {
+                    transactions.append(response.result.transaction)
+                }
+            }
+            let _ = try await releaseMempool.execute()
+            return transactions
+        }
+        
+        /// Wait for the mempool to be empty
+        public func waitForEmptyMempool(timeoutSeconds: TimeInterval = 60.0) async throws {
+            let startTime = Date().timeIntervalSince1970
+            while true {
+                let _ = try await acquireMempool.execute()
+                
+                let response = try await nextTransaction.execute(
+                    id: JSONRPCId.generateNextNanoId()
+                )
+                
+                if case .noMoreTransactions = response.result.transaction {
+                    break
+                }
+                
+                if Date().timeIntervalSince1970 - startTime > timeoutSeconds {
+                    throw OgmiosError.timeoutError("Mempool did not empty within the timeout period")
+                }
+                
+                try await Task.sleep(nanoseconds: 1_000_000_000) // Sleep for 1 second
+            }
         }
     }
 }
