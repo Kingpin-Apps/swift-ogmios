@@ -12,17 +12,14 @@ let package = Package(
       .tvOS(.v14),
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "SwiftOgmios",
             targets: ["SwiftOgmios"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", .upToNextMinor(from: "0.1.32")),
+        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.2.23"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "SwiftOgmios",
             dependencies: [
