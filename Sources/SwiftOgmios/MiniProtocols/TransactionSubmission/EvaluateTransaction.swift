@@ -32,7 +32,11 @@ public struct EvaluateTransaction {
         public let transaction: TransactionCBOR
         public let additionalUtxo: Utxo?
         
-        init(transaction: TransactionCBOR, additionalUtxo: Utxo? = nil) {
+        /// Creates a new Params for evaluating a transaction.
+        /// - Parameters:
+        ///   - transaction: The transaction to evaluate.
+        ///   - additionalUtxo: Additional UTxOs to consider for evaluation (optional).
+        public init(transaction: TransactionCBOR, additionalUtxo: Utxo? = nil) {
             self.transaction = transaction
             self.additionalUtxo = additionalUtxo
         }

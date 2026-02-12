@@ -1,7 +1,7 @@
 
 /// A stake address (a.k.a reward account)
 public struct StakeAddress: StringCallable {
-    let value: String
+    public let value: String
     
     public init(_ value: String) throws {
         guard value.starts(with: "stake1") || value.starts(with: "stake_test1") else {

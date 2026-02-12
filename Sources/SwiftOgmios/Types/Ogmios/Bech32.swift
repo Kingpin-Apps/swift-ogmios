@@ -2,7 +2,7 @@ import Foundation
 
 /// "A Blake2b 28-byte hash digest of a drep verification key or script.
 public struct Bech32: StringCallable {
-    let value: String
+    public let value: String
     
     public init(_ value: String) throws {
         let pattern = "^(?:[0-9]+|[0-9a-f]+)$"
@@ -18,7 +18,7 @@ public struct Bech32: StringCallable {
 
 /// "A Blake2b 28-byte hash digest of a drep verification key or script.
 public struct Bech32DRepVkhDRepScript: StringCallable {
-    let value: String
+    public let value: String
     
     public init(_ value: String) throws {
         guard value.count == 56 else {
@@ -41,7 +41,7 @@ public struct Bech32DRepVkhDRepScript: StringCallable {
 /// Examples: "script1dss9g887v3rdmadpq3n44d5ph3ma4aha2rtxfdsnnftykaau8x7",
 ///  "stake_vkh1dss9g887v3rdmadpq3n44d5ph3ma4aha2rtxfdsnnftyklueu8u"
 public struct Bech32StakeVkhScript: StringCallable {
-    let value: String
+    public let value: String
     
     public init(_ value: String) throws {
         guard value.starts(with: "stake_vkh") || value.starts(with: "script") else {

@@ -1,4 +1,4 @@
-protocol StringCallable: JSONSerializable {
+public protocol StringCallable: JSONSerializable {
     associatedtype T: Codable & Sendable & Hashable & CustomStringConvertible
     
     var value: T { get }

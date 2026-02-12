@@ -63,7 +63,7 @@ import Foundation
 /// 
 /// ## See Also
 /// - <doc:ErrorHandling>
-enum OgmiosError: Error, CustomStringConvertible, Equatable {
+public enum OgmiosError: Error, CustomStringConvertible, Equatable {
     /// Connection to the Ogmios server failed
     /// - Parameter String?: Optional error message with additional context
     case connectionError(String?)
@@ -126,7 +126,7 @@ enum OgmiosError: Error, CustomStringConvertible, Equatable {
     ///     logger.error("Ogmios operation failed", metadata: ["error": "\(error.description)"])
     /// }
     /// ```
-    var description: String {
+    public var description: String {
         switch self {
             case .connectionError(let message):
                 return message ?? "Connection error"

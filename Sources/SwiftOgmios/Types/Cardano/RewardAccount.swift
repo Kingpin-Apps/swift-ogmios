@@ -13,7 +13,7 @@ public struct RewardAccount: StringCallable, Codable, Sendable {
 }
 
 public struct RewardTransfer: StringCallable {
-    let value: Dictionary<String, ValueDelta>
+    public let value: Dictionary<String, ValueDelta>
     
     public init(_ value: Dictionary<String, ValueDelta>) throws {
         self.value = value

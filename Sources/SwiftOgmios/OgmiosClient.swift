@@ -22,7 +22,7 @@ import Logging
 /// 
 /// ## See Also
 /// - <doc:TransportTypes>
-enum JSONRPCTransport {
+public enum JSONRPCTransport {
     /// HTTP transport for unencrypted communication
     /// - Parameter URL: The HTTP endpoint URL
     case http(URL)
@@ -66,7 +66,7 @@ enum JSONRPCTransport {
 /// 
 /// ## See Also
 /// - <doc:ErrorHandling>
-protocol JSONRPCTransportDelegate: AnyObject, Sendable {
+public protocol JSONRPCTransportDelegate: AnyObject, Sendable {
     /// Called when the transport successfully establishes a connection
     func transportDidConnect()
     
@@ -162,7 +162,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:ErrorHandling>
-    weak var delegate: JSONRPCTransportDelegate?
+    public weak var delegate: JSONRPCTransportDelegate?
     
     private let host: String
     private let port: Int

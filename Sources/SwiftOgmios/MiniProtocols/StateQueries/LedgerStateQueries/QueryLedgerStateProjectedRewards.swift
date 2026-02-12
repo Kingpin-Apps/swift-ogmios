@@ -34,6 +34,12 @@ public struct QueryLedgerStateProjectedRewards {
         public let stake: [ValueAdaOnly]
         public let scripts: [AnyStakeCredential]
         public let keys: [AnyStakeCredential]
+        
+        public init(stake: [ValueAdaOnly] = [], scripts: [AnyStakeCredential] = [], keys: [AnyStakeCredential] = []) {
+            self.stake = stake
+            self.scripts = scripts
+            self.keys = keys
+        }
     }
     
     // MARK: - Response

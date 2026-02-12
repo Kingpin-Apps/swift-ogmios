@@ -183,7 +183,7 @@ public struct Members: JSONSerializable {
 
 /// A ratio of two integers, to express exact fractions.
 public struct Ratio: StringCallable {
-    let value: String
+    public let value: String
     
     public init(_ value: String) throws {
         guard value.split(separator: "/").count == 2 else {
@@ -195,7 +195,7 @@ public struct Ratio: StringCallable {
 }
 
 public struct UtcTime: StringCallable {
-    let value: Date
+    public let value: Date
     
     public init(_ value: Date) throws {
         self.value = value

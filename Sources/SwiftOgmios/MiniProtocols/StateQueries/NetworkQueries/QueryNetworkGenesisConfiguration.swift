@@ -27,9 +27,15 @@ public struct QueryNetworkGenesisConfiguration {
         }
     }
     
-    // Mark - Params
+    // MARK: - Params
     public struct Params: JSONSerializable, Sendable {
         public let era: EraWithGenesis
+        
+        /// Creates a new Params for querying genesis configuration.
+        /// - Parameter era: The era to query genesis configuration for.
+        public init(era: EraWithGenesis) {
+            self.era = era
+        }
     }
     
     // MARK: - Response

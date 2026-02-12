@@ -34,6 +34,11 @@ public struct QueryLedgerStateDelegateRepresentatives {
     public struct Params: JSONSerializable {
         public let scripts: [AnyDelegateRepresentativeCredential]
         public let keys: [AnyDelegateRepresentativeCredential]
+        
+        public init(scripts: [AnyDelegateRepresentativeCredential] = [], keys: [AnyDelegateRepresentativeCredential] = []) {
+            self.scripts = scripts
+            self.keys = keys
+        }
     }
     
     // MARK: - Response

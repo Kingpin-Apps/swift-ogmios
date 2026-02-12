@@ -31,6 +31,10 @@ public struct QueryLedgerStateGovernanceProposals {
     // MARK: - Params
     public struct Params: JSONSerializable, Sendable {
         public let proposals: [GovernanceProposalReference]
+        
+        public init(proposals: [GovernanceProposalReference]) {
+            self.proposals = proposals
+        }
     }
     
     // MARK: - Response

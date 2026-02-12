@@ -31,9 +31,21 @@ public struct SubmitTransaction {
     public struct Params: JSONSerializable {
         public let transaction: Transaction
         
+        /// Creates a new Params with the given transaction.
+        /// - Parameter transaction: The transaction to submit.
+        public init(transaction: Transaction) {
+            self.transaction = transaction
+        }
+        
         public struct Transaction: JSONSerializable {
             /// CBOR-serialized signed transaction (base16)
             public let cbor: String
+            
+            /// Creates a new Transaction with the given CBOR hex string.
+            /// - Parameter cbor: The CBOR-serialized signed transaction in base16 (hex) format.
+            public init(cbor: String) {
+                self.cbor = cbor
+            }
         }
     }
     

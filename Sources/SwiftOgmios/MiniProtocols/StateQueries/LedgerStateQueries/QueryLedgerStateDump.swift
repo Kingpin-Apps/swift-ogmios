@@ -32,6 +32,10 @@ public struct QueryLedgerStateDump {
     public struct Params: JSONSerializable, Sendable {
         /// A filepath to dump the ledger state to disk, relative to the server's location.
         public let to: String
+        
+        public init(to: String) {
+            self.to = to
+        }
     }
     
     // MARK: - Response

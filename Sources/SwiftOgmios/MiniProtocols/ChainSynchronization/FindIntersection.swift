@@ -31,6 +31,12 @@ public struct FindIntersection {
     // MARK: - Params
     public struct Params: JSONSerializable {
         public let points: [PointOrOrigin]
+        
+        /// Creates a new Params for finding an intersection.
+        /// - Parameter points: The points to find intersection with.
+        public init(points: [PointOrOrigin]) {
+            self.points = points
+        }
     }
     
     
