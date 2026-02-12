@@ -381,7 +381,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// ## See Also
     /// - <doc:GettingStarted>
     /// - <doc:TransportTypes>
-    init(
+    public init(
         host: String = "localhost",
         port: Int = 1337,
         path: String = "",
@@ -442,7 +442,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// ## See Also
     /// - ``disconnect()``
     /// - <doc:ErrorHandling>
-    func connect(
+    public func connect(
         httpConnection: (any HTTPConnectable)? = nil,
         webSocketConnection: (any WebSocketConnectable)? = nil
     ) async throws {
@@ -472,7 +472,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - ``connect(httpConnection:webSocketConnection:)``
-    func disconnect() {
+    public func disconnect() {
         webSocketConnection?.close()
         webSocketConnection = nil
         delegate?.transportDidDisconnect()
