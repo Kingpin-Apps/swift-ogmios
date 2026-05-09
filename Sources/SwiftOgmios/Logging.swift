@@ -15,20 +15,20 @@ private let loggingInitOnce: Void = {
     }
 }()
 
-protocol Loggable {
-    var logger: Logger { get }
+protocol Loggable: Sendable {
+    nonisolated var logger: Logger { get }
 }
 
 extension Loggable {
-    
-    func setupLogging() {
+
+    nonisolated func setupLogging() {
         _ = loggingInitOnce
     }
-    
-    func logResponse(response: any JSONRPCResponse, logLevel: LogLevel = .debug) {
+
+    nonisolated func logResponse(response: any JSONRPCResponse, logLevel: LogLevel = .debug) {
         let responseType = type(of: response)
         let responseString = (try? response.toJSONString()) ?? String(describing: response)
-        
+
         switch logLevel {
             case .debug:
                 logger.debug("Response Type: \(responseType), \nResponse: \(responseString)")
@@ -40,11 +40,11 @@ extension Loggable {
                 logger.error("Response Type: \(responseType), \nResponse: \(responseString)")
         }
     }
-    
-    func logResponseError(response: any JSONRPCResponseError) {
+
+    nonisolated func logResponseError(response: any JSONRPCResponseError) {
         let responseType = type(of: response)
         let responseString = (try? response.toJSONString()) ?? String(describing: response)
-        
+
         logger.error("Response Type: \(responseType), \nResponse: \(responseString)")
     }
 }

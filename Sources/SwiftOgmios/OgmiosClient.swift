@@ -6,23 +6,23 @@ import Logging
 // MARK: - Transport Protocol
 
 /// Represents the different transport methods supported by SwiftOgmios for JSON-RPC communication.
-/// 
+///
 /// SwiftOgmios supports both HTTP-based and WebSocket-based transports, with optional TLS encryption.
 /// Choose the appropriate transport based on your use case:
 /// - HTTP/HTTPS: Best for simple queries and serverless environments
 /// - WebSocket/WSS: Required for streaming protocols like chain sync and mempool monitoring
-/// 
+///
 /// ## Topics
-/// 
+///
 /// ### Transport Types
 /// - ``http(_:)``
 /// - ``https(_:)``
 /// - ``ws(_:)``
 /// - ``wss(_:)``
-/// 
+///
 /// ## See Also
 /// - <doc:TransportTypes>
-public enum JSONRPCTransport {
+public enum JSONRPCTransport: Sendable {
     /// HTTP transport for unencrypted communication
     /// - Parameter URL: The HTTP endpoint URL
     case http(URL)
@@ -84,95 +84,110 @@ public protocol JSONRPCTransportDelegate: AnyObject, Sendable {
 
 // MARK: - OgmiosClient
 
-/// A Swift client for communicating with Ogmios servers via JSON-RPC.
-/// 
-/// `OgmiosClient` provides a comprehensive interface to all Ogmios protocols including
-/// ledger state queries, chain synchronization, transaction submission, and mempool monitoring.
-/// It supports both HTTP and WebSocket transports with automatic connection management.
-/// 
+/// A Swift `actor` for communicating with Ogmios servers via JSON-RPC.
+///
+/// `OgmiosClient` provides a comprehensive, data-race-safe interface to all Ogmios
+/// protocols including ledger state queries, chain synchronization, transaction
+/// submission, and mempool monitoring. It supports both HTTP and WebSocket transports.
+///
 /// ## Overview
-/// 
-/// The client is organized into protocol-specific namespaces that group related operations:
+///
+/// The client is organized into protocol-specific namespaces that group related
+/// operations:
 /// - ``ledgerStateQuery``: Query the current ledger state
-/// - ``networkQuery``: Query network-level information  
+/// - ``networkQuery``: Query network-level information
 /// - ``chainSync``: Stream blockchain data in real-time
 /// - ``transactionSubmission``: Submit and evaluate transactions
 /// - ``mempoolMonitor``: Monitor mempool contents and changes
-/// 
+///
+/// All five namespaces are `nonisolated` getters returning `Sendable` value types,
+/// so chained access (`client.ledgerStateQuery.tip.result()`) does not pay an
+/// actor hop until the actual JSON-RPC call.
+///
 /// ## Creating a Client
-/// 
+///
+/// The recommended entry point is the scoped
+/// ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
+/// helper, which guarantees ``disconnect()`` runs on every exit path — including
+/// thrown errors. This mirrors the `CardanoNode.withClient(config:body:)` pattern
+/// in `swift-cardano-network`:
+///
 /// ```swift
-/// // HTTP client for simple queries
-/// let httpClient = try await OgmiosClient(
-///     host: "localhost",
-///     port: 1337,
-///     secure: false,
-///     httpOnly: true
-/// )
-/// 
-/// // WebSocket client for streaming protocols
-/// let wsClient = try await OgmiosClient(
-///     host: "localhost", 
-///     port: 1337,
-///     secure: false,
-///     httpOnly: false
-/// )
+/// let tip = try await OgmiosClient.withClient(host: "localhost", port: 1337) { client in
+///     try await client.ledgerStateQuery.tip.result()
+/// }
 /// ```
-/// 
+///
+/// For long-lived clients whose lifetime spans many calls, use the initializer
+/// directly and call ``disconnect()`` explicitly when finished:
+///
+/// ```swift
+/// let client = try await OgmiosClient(host: "localhost", port: 1337, httpOnly: true)
+/// defer { Task { await client.disconnect() } }
+/// // ... use client ...
+/// ```
+///
+/// > Important: `OgmiosClient` does **not** auto-`disconnect()` on deallocation —
+/// > `isolated deinit` requires macOS 15.4+ and the package targets 15.0. Use
+/// > ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
+/// > whenever the client's lifetime is scoped, or call ``disconnect()`` yourself.
+///
 /// ## Topics
-/// 
+///
 /// ### Creating Clients
+/// - ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
 /// - ``init(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:)``
-/// 
+///
 /// ### Protocol Groups
 /// - ``ledgerStateQuery``
-/// - ``networkQuery`` 
+/// - ``networkQuery``
 /// - ``chainSync``
 /// - ``transactionSubmission``
 /// - ``mempoolMonitor``
-/// 
+///
 /// ### Connection Management
 /// - ``connect(httpConnection:webSocketConnection:)``
 /// - ``disconnect()``
 /// - ``delegate``
-/// 
+///
 /// ### Health Monitoring
 /// - ``getServerHealth(httpConnection:)``
-/// 
+///
 /// ## See Also
 /// - <doc:GettingStarted>
 /// - <doc:TransportTypes>
 /// - <doc:ErrorHandling>
-public class OgmiosClient: @unchecked Sendable, Loggable {
-    
+public actor OgmiosClient: Loggable {
+
     // MARK: - Properties
-    
-    private let transport: JSONRPCTransport
-    private var session: URLSession {
+
+    nonisolated private let transport: JSONRPCTransport
+    nonisolated private var session: URLSession {
         return URLSession(configuration: self.configuration)
     }
-    
+
     private var httpConnection: (any HTTPConnectable)?
     private var webSocketConnection: (any WebSocketConnectable)?
-    
+
     /// Optional delegate to receive transport events
-    /// 
+    ///
     /// Set this delegate to receive notifications about connection state changes,
-    /// incoming responses, and transport errors.
-    /// 
+    /// incoming responses, and transport errors. Reading and writing this property
+    /// is actor-isolated, so external callers must `await`.
+    ///
     /// ## See Also
     /// - <doc:ErrorHandling>
     public weak var delegate: JSONRPCTransportDelegate?
-    
-    private let host: String
-    private let port: Int
-    private let path: String
-    private let secure: Bool
-    private let httpOnly: Bool
-    private let rpcVersion: String
-    private let configuration: URLSessionConfiguration
-    
-    internal let logger: Logger
+
+    nonisolated private let host: String
+    nonisolated private let port: Int
+    nonisolated private let path: String
+    nonisolated private let secure: Bool
+    nonisolated private let httpOnly: Bool
+    nonisolated private let rpcVersion: String
+    nonisolated private let configuration: URLSessionConfiguration
+
+    nonisolated internal let logger: Logger
     
     /// Access to chain synchronization protocols
     /// 
@@ -199,7 +214,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:ChainSynchronization>
-    public var chainSync: ChainSync {
+    nonisolated public var chainSync: ChainSync {
         return ChainSync(client: self)
     }
     
@@ -228,7 +243,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:LedgerStateQueries>
-    public var ledgerStateQuery: LedgerStateQuery {
+    nonisolated public var ledgerStateQuery: LedgerStateQuery {
         return LedgerStateQuery(client: self)
     }
     
@@ -254,7 +269,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:LedgerStateQueries>
-    public var networkQuery: NetworkQuery {
+    nonisolated public var networkQuery: NetworkQuery {
         return NetworkQuery(client: self)
     }
     
@@ -285,7 +300,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:TransactionSubmission>
-    public var transactionSubmission: TransactionSubmission {
+    nonisolated public var transactionSubmission: TransactionSubmission {
         return TransactionSubmission(client: self)
     }
     
@@ -316,7 +331,7 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     /// 
     /// ## See Also
     /// - <doc:MempoolMonitoring>
-    public var mempoolMonitor: MempoolMonitor {
+    nonisolated public var mempoolMonitor: MempoolMonitor {
         return MempoolMonitor(client: self)
     }
     
@@ -420,10 +435,83 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         )
     }
     
-    deinit {
-        disconnect()
+    // Note: no `deinit` — `httpConnection` / `webSocketConnection` are
+    // actor-isolated state and a non-isolated `deinit` cannot touch them.
+    // `isolated deinit` would require macOS 15.4+, beyond this package's
+    // current minimum. Underlying transports clean themselves up via their
+    // own deinit; for timely WebSocket close + `transportDidDisconnect()`
+    // delivery, prefer the scoped ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
+    // helper, which guarantees `disconnect()` runs on every exit path.
+    // Callers managing lifecycle directly must call `disconnect()` explicitly
+    // before letting the client deallocate.
+
+    // MARK: - Scoped client (with-style)
+
+    /// Open an Ogmios connection, run `body`, then close the connection — even if
+    /// `body` throws.
+    ///
+    /// This is the preferred entry point when the client's lifetime maps cleanly
+    /// to a single piece of work. Modelled on `CardanoNode.withClient(config:body:)`
+    /// from `swift-cardano-network`, the helper guarantees ``disconnect()`` runs on
+    /// every exit path, including thrown errors and task cancellation.
+    ///
+    /// ```swift
+    /// let tip = try await OgmiosClient.withClient(host: "localhost", port: 1337) { client in
+    ///     try await client.ledgerStateQuery.tip.result()
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - host: The hostname or IP address of the Ogmios server. Defaults to `"localhost"`.
+    ///   - port: The port number of the Ogmios server. Defaults to `1337`.
+    ///   - path: Additional path component for the server URL. Defaults to empty string.
+    ///   - secure: Whether to use TLS encryption (HTTPS/WSS). Defaults to `false`.
+    ///   - httpOnly: Whether to use HTTP transport only. Defaults to `false`.
+    ///   - rpcVersion: JSON-RPC version to use. Defaults to `"2.0"`.
+    ///   - configuration: URLSession configuration for network requests. Defaults to `.default`.
+    ///   - httpConnection: Custom HTTP connection implementation for dependency injection. Optional.
+    ///   - webSocketConnection: Custom WebSocket connection implementation for dependency injection. Optional.
+    ///   - body: A closure receiving the ready-to-use client.
+    /// - Returns: The value returned by `body`.
+    /// - Throws: Anything thrown by ``init(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:)`` or `body`.
+    ///
+    /// ## See Also
+    /// - ``init(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:)``
+    /// - ``disconnect()``
+    @discardableResult
+    public static func withClient<Result: Sendable>(
+        host: String = "localhost",
+        port: Int = 1337,
+        path: String = "",
+        secure: Bool = false,
+        httpOnly: Bool = false,
+        rpcVersion: String = "2.0",
+        configuration: URLSessionConfiguration = .default,
+        httpConnection: (any HTTPConnectable)? = nil,
+        webSocketConnection: (any WebSocketConnectable)? = nil,
+        body: @Sendable (OgmiosClient) async throws -> Result
+    ) async throws -> Result {
+        let client = try await OgmiosClient(
+            host: host,
+            port: port,
+            path: path,
+            secure: secure,
+            httpOnly: httpOnly,
+            rpcVersion: rpcVersion,
+            configuration: configuration,
+            httpConnection: httpConnection,
+            webSocketConnection: webSocketConnection
+        )
+        do {
+            let result = try await body(client)
+            await client.disconnect()
+            return result
+        } catch {
+            await client.disconnect()
+            throw error
+        }
     }
-    
+
     // MARK: - Connection Management
     
     /// Establishes a connection to the Ogmios server.
@@ -446,6 +534,13 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
         httpConnection: (any HTTPConnectable)? = nil,
         webSocketConnection: (any WebSocketConnectable)? = nil
     ) async throws {
+        // Close any previously-established connection so a reconnect doesn't leak the
+        // old transport. WebSocketConnection's `close()` triggers a graceful socket
+        // shutdown; HTTPConnection's reference release is sufficient for cleanup.
+        self.webSocketConnection?.close()
+        self.webSocketConnection = nil
+        self.httpConnection = nil
+
         switch transport {
             case .ws(let url), .wss(let url):
                 self.webSocketConnection = webSocketConnection ?? WebSocketConnection(url: url, session: session)
@@ -456,25 +551,33 @@ public class OgmiosClient: @unchecked Sendable, Loggable {
     }
     
     /// Closes the connection to the Ogmios server.
-    /// 
-    /// This method cleanly closes the transport connection and notifies the delegate.
-    /// For WebSocket connections, this properly closes the WebSocket connection.
-    /// For HTTP connections, this cleans up any cached connection state.
-    /// 
-    /// The connection can be re-established by calling ``connect(httpConnection:webSocketConnection:)``.
-    /// 
+    ///
+    /// Closes the WebSocket transport (if any), drops the cached HTTP connection,
+    /// and notifies the delegate via ``JSONRPCTransportDelegate/transportDidDisconnect()``.
+    /// The connection can be re-established by calling
+    /// ``connect(httpConnection:webSocketConnection:)``.
+    ///
+    /// > Important: Because `OgmiosClient` is an `actor` and its `deinit` cannot
+    /// > touch isolated state without `isolated deinit` (macOS 15.4+), the client
+    /// > does **not** automatically `disconnect()` on deallocation. Call this
+    /// > explicitly before letting the client go out of scope, or use the scoped
+    /// > ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
+    /// > helper, which guarantees `disconnect()` runs on every exit path.
+    ///
     /// ## Example
     /// ```swift
     /// let client = try await OgmiosClient()
     /// // ... use client
-    /// client.disconnect()
+    /// await client.disconnect()
     /// ```
-    /// 
+    ///
     /// ## See Also
     /// - ``connect(httpConnection:webSocketConnection:)``
+    /// - ``withClient(host:port:path:secure:httpOnly:rpcVersion:configuration:httpConnection:webSocketConnection:body:)``
     public func disconnect() {
         webSocketConnection?.close()
         webSocketConnection = nil
+        httpConnection = nil
         delegate?.transportDidDisconnect()
     }
         
@@ -633,7 +736,7 @@ extension OgmiosClient {
     /// 
     /// ## See Also
     /// - <doc:LedgerStateQueries>
-    public struct LedgerStateQuery {
+    public struct LedgerStateQuery: Sendable {
         private let client: OgmiosClient
         
         /// Creates a ledger state query namespace for the given client
@@ -750,7 +853,7 @@ extension OgmiosClient {
     /// 
     /// ## See Also
     /// - <doc:LedgerStateQueries>
-    public struct NetworkQuery {
+    public struct NetworkQuery: Sendable {
         private let client: OgmiosClient
         
         /// Creates a network query namespace for the given client
@@ -799,7 +902,7 @@ extension OgmiosClient {
     /// ## See Also
     /// - <doc:ChainSynchronization>
     /// - <doc:TransportTypes>
-    public struct ChainSync {
+    public struct ChainSync: Sendable {
         private let client: OgmiosClient
         
         /// Creates a chain sync namespace for the given client
@@ -836,7 +939,7 @@ extension OgmiosClient {
     /// ## See Also
     /// - <doc:TransactionSubmission>
     /// - <doc:ErrorHandling>
-    public struct TransactionSubmission {
+    public struct TransactionSubmission: Sendable {
         private let client: OgmiosClient
         
         /// Creates a transaction submission namespace for the given client
@@ -887,7 +990,7 @@ extension OgmiosClient {
     /// ## See Also
     /// - <doc:MempoolMonitoring>
     /// - <doc:TransportTypes>
-    public struct MempoolMonitor {
+    public struct MempoolMonitor: Sendable {
         private let client: OgmiosClient
         
         /// Creates a mempool monitor namespace for the given client
