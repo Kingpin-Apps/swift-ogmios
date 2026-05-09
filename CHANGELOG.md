@@ -1,3 +1,9 @@
+## 0.2.0 (2026-05-09)
+
+### Feat
+
+- add Sendable conformance and new withClient factory
+
 ## 0.1.3 (2026-02-12)
 
 ### Fix
