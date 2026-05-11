@@ -1,5 +1,4 @@
 import Foundation
-import System
 @testable import SwiftOgmios
 
 public func mockSendRequest(json: String) async throws -> Data {

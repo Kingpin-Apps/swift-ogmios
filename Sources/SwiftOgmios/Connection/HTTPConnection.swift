@@ -1,5 +1,7 @@
 import Foundation
-import Network
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 public protocol HTTPConnectable: Connectable, Sendable {
     func get(url: URL) async throws -> Data

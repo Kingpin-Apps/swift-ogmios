@@ -17,13 +17,17 @@ let package = Package(
             targets: ["SwiftOgmios"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.2.23"),
+        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.3.19"),
+        // Cross-platform WebSocket client (Apple + Linux); replaces URLSessionWebSocketTask
+        // which is unavailable in swift-corelibs-foundation on Linux.
+        .package(url: "https://github.com/vapor/websocket-kit.git", from: "2.16.2"),
     ],
     targets: [
         .target(
             name: "SwiftOgmios",
             dependencies: [
                 .product(name: "SwiftCardanoCore", package: "swift-cardano-core"),
+                .product(name: "WebSocketKit", package: "websocket-kit"),
             ]
         ),
         .testTarget(

@@ -1,5 +1,4 @@
 import Foundation
-import Network
 
 public let JSONRPCVersion = "2.0"
 

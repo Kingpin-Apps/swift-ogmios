@@ -1,4 +1,7 @@
 import Foundation
+import NIOCore
+import NIOPosix
+import WebSocketKit
 
 public protocol WebSocketConnectable: Connectable, Sendable {
     func close()
@@ -14,105 +17,127 @@ public enum WebSocketConnectionError: Error {
     case closed
 }
 
-/// A generic WebSocket Connection over an expected `Incoming` and `Outgoing` message type.
+/// A WebSocket connection backed by Vapor's `WebSocketKit` (swift-nio).
+///
+/// Works on Apple platforms and Linux without platform gating, replacing the previous
+/// `URLSessionWebSocketTask`-based implementation (which is unavailable in
+/// swift-corelibs-foundation on Linux).
+///
+/// The connection is established lazily on the first `sendRequest` call.
 public final class WebSocketConnection: WebSocketConnectable {
-    private let webSocketTask: URLSessionWebSocketTask
-    private let session: URLSession
+    private let url: URL
+    private let eventLoopGroup: any EventLoopGroup
+    private let state: ConnectionState
 
-    public init(url: URL, session: URLSession) {
-        self.session = session
-        self.webSocketTask = self.session.webSocketTask(with: url)
-        
-        self.webSocketTask.maximumMessageSize = 4 * 1024 * 1024 // 4 MB
-
-        webSocketTask.resume()
+    public init(
+        url: URL,
+        eventLoopGroup: any EventLoopGroup = MultiThreadedEventLoopGroup.singleton
+    ) {
+        self.url = url
+        self.eventLoopGroup = eventLoopGroup
+        self.state = ConnectionState()
     }
 
-    deinit {
-        webSocketTask.cancel(with: .goingAway, reason: nil)
+    public func sendRequest(json: String) async throws -> Data {
+        try await state.connectIfNeeded(url: url, eventLoopGroup: eventLoopGroup)
+        try await state.send(json)
+        let response = try await state.receiveOnce()
+        return response.data(using: .utf8) ?? Data()
     }
 
-    private func receiveSingleMessage() async throws -> String {
-        switch try await webSocketTask.receive() {
-            case let .string(message):
-                return message
-            case let .data(messageData):
-                guard let message = String(data: messageData, encoding: .utf8) else {
-                    throw WebSocketConnectionError.decodingError
-                }
-                return message
-            @unknown default:
-                webSocketTask.cancel(with: .unsupportedData, reason: nil)
-                throw WebSocketConnectionError.decodingError
-        }
+    public func close() {
+        let state = self.state
+        Task { await state.close() }
     }
 }
 
-// MARK: Public Interface
+// MARK: - Internal state
 
-extension WebSocketConnection {
-    public func sendRequest(json: String) async throws -> Data {
-        try await self.send(json)
-        
-        let responseString = try await self.receiveOnce()
-        return responseString.data(using: .utf8) ?? Data()
-    }
-    
-    func send(_ message: String) async throws {
-        do {
-            try await webSocketTask.send(.string(message))
-        } catch {
-            switch webSocketTask.closeCode {
-                case .invalid:
-                    throw WebSocketConnectionError.connectionError
+private actor ConnectionState {
+    private var webSocket: WebSocket?
+    private var pendingMessages: [String] = []
+    private var waitingReceivers: [CheckedContinuation<String, Error>] = []
+    private var didClose: Bool = false
 
-                case .goingAway:
-                    throw WebSocketConnectionError.disconnected
+    func connectIfNeeded(url: URL, eventLoopGroup: any EventLoopGroup) async throws {
+        if let ws = webSocket, !ws.isClosed { return }
+        if didClose { throw WebSocketConnectionError.closed }
 
-                case .normalClosure:
-                    throw WebSocketConnectionError.closed
+        let promise = eventLoopGroup.any().makePromise(of: WebSocket.self)
 
-                default:
-                    throw WebSocketConnectionError.transportError
+        WebSocket.connect(to: url, on: eventLoopGroup) { [weak self] ws in
+            let weakState = self
+            ws.onText { _, text in
+                Task { await weakState?.handleIncoming(text) }
             }
+            ws.onClose.whenComplete { _ in
+                Task { await weakState?.handleRemoteClose() }
+            }
+            promise.succeed(ws)
+        }.whenFailure { error in
+            promise.fail(error)
+        }
+
+        do {
+            self.webSocket = try await promise.futureResult.get()
+        } catch {
+            throw WebSocketConnectionError.connectionError
+        }
+    }
+
+    func send(_ message: String) async throws {
+        guard let ws = webSocket, !ws.isClosed else {
+            throw WebSocketConnectionError.disconnected
+        }
+        do {
+            try await ws.send(message)
+        } catch {
+            throw WebSocketConnectionError.transportError
         }
     }
 
     func receiveOnce() async throws -> String {
-        do {
-            return try await receiveSingleMessage()
-        } catch {
-            switch webSocketTask.closeCode {
-                case .invalid:
-                    throw WebSocketConnectionError.connectionError
-
-                case .goingAway:
-                    throw WebSocketConnectionError.disconnected
-
-                case .normalClosure:
-                    throw WebSocketConnectionError.closed
-
-                default:
-                    throw WebSocketConnectionError.transportError
-            }
+        if !pendingMessages.isEmpty {
+            return pendingMessages.removeFirst()
+        }
+        if didClose {
+            throw WebSocketConnectionError.closed
+        }
+        return try await withCheckedThrowingContinuation { continuation in
+            waitingReceivers.append(continuation)
         }
     }
 
-    func receive() -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { [weak self] in
-            guard let self else {
-                // Self is gone, return nil to end the stream
-                return nil
-            }
+    func close() async {
+        didClose = true
+        for receiver in waitingReceivers {
+            receiver.resume(throwing: WebSocketConnectionError.closed)
+        }
+        waitingReceivers.removeAll()
+        pendingMessages.removeAll()
+        if let ws = webSocket, !ws.isClosed {
+            try? await ws.close()
+        }
+        webSocket = nil
+    }
 
-            let message = try await self.receiveOnce()
+    // MARK: - Callbacks invoked from NIO event loop
 
-            // End the stream (by returning nil) if the calling Task was canceled
-            return Task.isCancelled ? nil : message
+    private func handleIncoming(_ message: String) {
+        if let receiver = waitingReceivers.first {
+            waitingReceivers.removeFirst()
+            receiver.resume(returning: message)
+        } else {
+            pendingMessages.append(message)
         }
     }
 
-    public func close() {
-        webSocketTask.cancel(with: .normalClosure, reason: nil)
+    private func handleRemoteClose() {
+        didClose = true
+        for receiver in waitingReceivers {
+            receiver.resume(throwing: WebSocketConnectionError.disconnected)
+        }
+        waitingReceivers.removeAll()
+        webSocket = nil
     }
 }

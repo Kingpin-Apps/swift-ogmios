@@ -89,7 +89,7 @@ fileprivate class NanoIDHelper {
     
     /// Returns a random character from a given string
     static func randomCharacter(from string: String) -> Character {
-        let randomNum = Int(arc4random_uniform(UInt32(string.count)))
+        let randomNum = Int.random(in: 0..<string.count)
         let randomIndex = string.index(string.startIndex, offsetBy: randomNum)
         return string[randomIndex]
     }

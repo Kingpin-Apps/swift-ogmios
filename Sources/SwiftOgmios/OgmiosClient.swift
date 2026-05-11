@@ -1,6 +1,8 @@
 import Foundation
-import Network
 import Logging
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 
 // MARK: - Transport Protocol
@@ -543,7 +545,7 @@ public actor OgmiosClient: Loggable {
 
         switch transport {
             case .ws(let url), .wss(let url):
-                self.webSocketConnection = webSocketConnection ?? WebSocketConnection(url: url, session: session)
+                self.webSocketConnection = webSocketConnection ?? WebSocketConnection(url: url)
             case .http(let url), .https(let url):
                 self.httpConnection = httpConnection ?? HTTPConnection(url: url, session: session)
         }
