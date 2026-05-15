@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -17,9 +17,7 @@ let package = Package(
             targets: ["SwiftOgmios"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.3.19"),
-        // Cross-platform WebSocket client (Apple + Linux); replaces URLSessionWebSocketTask
-        // which is unavailable in swift-corelibs-foundation on Linux.
+        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.3.21"),
         .package(url: "https://github.com/vapor/websocket-kit.git", from: "2.16.2"),
     ],
     targets: [
