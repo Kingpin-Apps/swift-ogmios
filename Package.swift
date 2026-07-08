@@ -6,15 +6,15 @@ import PackageDescription
 let package = Package(
     name: "SwiftOgmios",
     platforms: [
-      .iOS(.v14),
-      .macOS(.v15),
-      .watchOS(.v7),
-      .tvOS(.v14),
+        .iOS(.v18),
+        .macOS(.v15),
+        .watchOS(.v7),
+        .tvOS(.v14),
     ],
     products: [
         .library(
             name: "SwiftOgmios",
-            targets: ["SwiftOgmios"]),
+            targets: ["SwiftOgmios"])
     ],
     dependencies: [
         .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.4.0"),
