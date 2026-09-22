@@ -1,3 +1,9 @@
+## 0.3.2 (2026-09-22)
+
+### Fix
+
+- reuse the client's HTTP connection for the health probe
+
 ## 0.3.1 (2026-07-08)
 
 ### Fix
