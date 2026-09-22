@@ -17,7 +17,7 @@ let package = Package(
             targets: ["SwiftOgmios"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.4.0"),
+        .package(url: "https://github.com/Kingpin-Apps/swift-cardano-core.git", from: "0.5.3"),
         .package(url: "https://github.com/vapor/websocket-kit.git", from: "2.16.2"),
     ],
     targets: [
