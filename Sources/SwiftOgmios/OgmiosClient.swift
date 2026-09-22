@@ -631,7 +631,8 @@ public actor OgmiosClient: Loggable {
     /// an HTTP GET request to the health endpoint.
     /// 
     /// - Parameter httpConnection: Custom HTTP connection for the health check. If not provided,
-    ///   a temporary HTTP connection will be created.
+    ///   the connection this client is already using is reused; a temporary HTTP connection is
+    ///   created only when the client has none (i.e. a WebSocket transport).
     ///   
     /// - Returns: A `Health` object containing server status information
     /// 
@@ -672,15 +673,18 @@ public actor OgmiosClient: Loggable {
                 healthCheckURL = URL(string: url.absoluteString.replacingOccurrences(of: "wss", with: "https"))!.appendingPathComponent("health")
         }
         
-        let responseData: Data
-        if httpConnection == nil {
-            responseData = try await HTTPConnection(
-                url: healthCheckURL,
-                session: session
-            ).get(url: healthCheckURL)
-        } else {
-            responseData = try await httpConnection!.get(url: healthCheckURL)
-        }
+        // Prefer an explicitly supplied connection, then the one this client is already
+        // using, and only fall back to a throwaway connection when neither exists — which
+        // is the case for a WebSocket transport, since `/health` is plain HTTP. Reusing
+        // `self.httpConnection` keeps an injected connection (a test double, a proxy, a
+        // custom `URLSession`) in play instead of silently reaching the network behind it.
+        // `HTTPConnection.get(url:)` honours the URL it is passed, so the connection's own
+        // base URL does not interfere here.
+        let connection =
+            httpConnection
+            ?? self.httpConnection
+            ?? HTTPConnection(url: healthCheckURL, session: session)
+        let responseData = try await connection.get(url: healthCheckURL)
         
         return try JSONDecoder().decode(Health.self, from: responseData)
     }
