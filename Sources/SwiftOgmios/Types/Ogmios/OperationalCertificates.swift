@@ -1,17 +1,17 @@
 import Foundation
 
-/// Operational certificate counters from operating stake pools.
+/// Operational certificate counters from operating stake pools (the ledger's `Word64` counters).
 public struct OperationalCertificates: StringCallable {
-    public let value: Dictionary<StakePoolId, Int>
+    public let value: Dictionary<StakePoolId, UInt64>
     
-    public init(_ value: Dictionary<StakePoolId, Int>) throws {
+    public init(_ value: Dictionary<StakePoolId, UInt64>) throws {
         self.value = value
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         // Explicitly decode as dictionary, not array
-        if let dictValue = try? container.decode([String: Int].self) {
+        if let dictValue = try? container.decode([String: UInt64].self) {
             // Convert string keys to StakePoolId
             let converted = try Dictionary(uniqueKeysWithValues:
                                             dictValue.map { key, value in
@@ -21,7 +21,7 @@ public struct OperationalCertificates: StringCallable {
             try self.init(converted)
         } else {
             throw DecodingError.typeMismatch(
-                Dictionary<StakePoolId, Int>.self,
+                Dictionary<StakePoolId, UInt64>.self,
                 DecodingError.Context(
                     codingPath: decoder.codingPath,
                     debugDescription: "Expected dictionary but found different type"

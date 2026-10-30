@@ -1,12 +1,19 @@
+import Foundation
+
 // MARK: - Supporting Types
 
 /// Reference script fee structure
+///
+/// `base` (lovelace per byte of the first tier, e.g. `15`) and `multiplier`
+/// (tier growth, e.g. `1.2`) are rationals in the ledger. Ogmios sends them as
+/// JSON numbers, so they are decoded as `Decimal`, which keeps the exact
+/// decimal text instead of rounding through binary floating point.
 public struct MinFeeReferenceScripts: JSONSerializable {
     public let range: UInt32
-    public let base: Double
-    public let multiplier: Double
+    public let base: Decimal
+    public let multiplier: Decimal
     
-    public init(range: UInt32, base: Double, multiplier: Double) {
+    public init(range: UInt32, base: Decimal, multiplier: Decimal) {
         self.range = range
         self.base = base
         self.multiplier = multiplier
@@ -40,29 +47,29 @@ public struct CostModels: JSONSerializable {
     // This would typically contain cost model parameters for different Plutus versions
     // The exact structure depends on the specific cost models used
     // Keys match the Language enum from the schema: "plutus:v1", "plutus:v2", "plutus:v3"
-    public let costModels: [String: [Int]]
+    public let costModels: [String: [Int64]]
     
-    public init(costModels: [String: [Int]] = [:]) {
+    public init(costModels: [String: [Int64]] = [:]) {
         self.costModels = costModels
     }
     
     // Convenience accessors for common Plutus versions
-    public var plutusV1: [Int]? {
+    public var plutusV1: [Int64]? {
         return costModels["plutus:v1"]
     }
     
-    public var plutusV2: [Int]? {
+    public var plutusV2: [Int64]? {
         return costModels["plutus:v2"]
     }
     
-    public var plutusV3: [Int]? {
+    public var plutusV3: [Int64]? {
         return costModels["plutus:v3"]
     }
     
     // Custom coding to handle the dynamic keys
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.costModels = try container.decode([String: [Int]].self)
+        self.costModels = try container.decode([String: [Int64]].self)
     }
     
     public func encode(to encoder: Encoder) throws {

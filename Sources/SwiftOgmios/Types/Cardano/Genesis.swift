@@ -150,7 +150,7 @@ public struct ByronProtocolParameters: JSONSerializable {
 public struct AlonzoUpdatableParameters: JSONSerializable {
     public let minUtxoDepositCoefficient: UInt64
     public let collateralPercentage: UInt64
-    public let plutusCostModels: [String: [Int]] // Cost models as dictionary
+    public let plutusCostModels: [String: [Int64]] // Cost models as dictionary
     public let maxCollateralInputs: UInt64
     public let maxExecutionUnitsPerBlock: SwiftOgmios.ExecutionUnits
     public let maxExecutionUnitsPerTransaction: SwiftOgmios.ExecutionUnits

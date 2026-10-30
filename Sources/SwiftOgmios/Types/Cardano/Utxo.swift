@@ -21,61 +21,106 @@ public struct Address: Codable, Sendable, Equatable, Hashable {
 }
 
 // MARK: - Value
-/// A multi-asset value (Ada and native tokens)
+/// A multi-asset value (Ada and native tokens) held by a transaction output.
+///
+/// Output quantities are never negative, so both the Lovelace amount and every
+/// token quantity are `UInt64` and decode exactly over `0...UInt64.max`.
+/// Signed multi-asset amounts (minting, ledger deltas) use ``Assets`` or
+/// ``SignedValue`` instead.
 public struct Value: Codable, Sendable, Equatable, Hashable {
     public let ada: Ada
-    public let assets: [String: [String: Int64]]?
+    public let assets: [String: [String: UInt64]]?
     
-    public init(ada: Ada, assets: [String: [String: Int64]]? = nil) {
+    public init(ada: Ada, assets: [String: [String: UInt64]]? = nil) {
         self.ada = ada
         self.assets = assets
     }
     
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.ada = try container.decode(Ada.self, forKey: .ada)
-        
-        // Decode additional properties as assets
-        var assetsDict: [String: [String: Int64]] = [:]
-        for key in container.allKeys {
-            if key.stringValue != "ada" {
-                let assetMap = try container.decode([String: Int64].self, forKey: key)
-                assetsDict[key.stringValue] = assetMap
-            }
-        }
-        
-        self.assets = assetsDict.isEmpty ? nil : assetsDict
+        let (ada, assets) = try decodeMultiAsset(Ada.self, UInt64.self, from: decoder)
+        self.ada = ada
+        self.assets = assets
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(ada, forKey: .ada)
-        
-        // Encode assets as additional properties
-        if let assets = assets {
-            for (policyId, assetMap) in assets {
-                if let key = CodingKeys(stringValue: policyId) {
-                    try container.encode(assetMap, forKey: key)
-                }
-            }
-        }
+        try encodeMultiAsset(ada: ada, assets: assets, to: encoder)
+    }
+}
+
+/// A multi-asset value whose amounts may be negative.
+///
+/// Used where the ledger reports a balance or difference rather than an
+/// output's holdings (e.g. minted vs expected value in a submission failure).
+/// Lovelace is a signed `Int64` and token quantities are ``AssetQuantity``.
+public struct SignedValue: Codable, Sendable, Equatable, Hashable {
+    public let ada: AdaDelta
+    public let assets: Assets?
+    
+    public init(ada: AdaDelta, assets: Assets? = nil) {
+        self.ada = ada
+        self.assets = assets
     }
     
-    private struct CodingKeys: CodingKey {
-        var stringValue: String
-        var intValue: Int?
-        
-        init?(stringValue: String) {
-            self.stringValue = stringValue
-            self.intValue = nil
+    public init(from decoder: Decoder) throws {
+        let (ada, assets) = try decodeMultiAsset(AdaDelta.self, AssetQuantity.self, from: decoder)
+        self.ada = ada
+        self.assets = assets
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        try encodeMultiAsset(ada: ada, assets: assets, to: encoder)
+    }
+}
+
+/// A dynamic key for the `ada` + policy-id shaped value objects.
+private struct MultiAssetKey: CodingKey {
+    var stringValue: String
+    var intValue: Int?
+    
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+        self.intValue = nil
+    }
+    
+    init?(intValue: Int) {
+        self.stringValue = String(intValue)
+        self.intValue = intValue
+    }
+    
+    static let ada = MultiAssetKey(stringValue: "ada")!
+}
+
+private func decodeMultiAsset<A: Decodable, Q: Decodable>(
+    _: A.Type,
+    _: Q.Type,
+    from decoder: Decoder
+) throws -> (A, [String: [String: Q]]?) {
+    let container = try decoder.container(keyedBy: MultiAssetKey.self)
+    let ada = try container.decode(A.self, forKey: .ada)
+    
+    // Every other key is a policy id mapping asset names to quantities.
+    var assets: [String: [String: Q]] = [:]
+    for key in container.allKeys where key.stringValue != "ada" {
+        assets[key.stringValue] = try container.decode([String: Q].self, forKey: key)
+    }
+    return (ada, assets.isEmpty ? nil : assets)
+}
+
+private func encodeMultiAsset<A: Encodable, Q: Encodable>(
+    ada: A,
+    assets: [String: [String: Q]]?,
+    to encoder: Encoder
+) throws {
+    var container = encoder.container(keyedBy: MultiAssetKey.self)
+    try container.encode(ada, forKey: .ada)
+    
+    // Encode assets as additional properties
+    if let assets = assets {
+        for (policyId, assetMap) in assets {
+            if let key = MultiAssetKey(stringValue: policyId) {
+                try container.encode(assetMap, forKey: key)
+            }
         }
-        
-        init?(intValue: Int) {
-            self.stringValue = String(intValue)
-            self.intValue = intValue
-        }
-        
-        static let ada = CodingKeys(stringValue: "ada")!
     }
 }
 

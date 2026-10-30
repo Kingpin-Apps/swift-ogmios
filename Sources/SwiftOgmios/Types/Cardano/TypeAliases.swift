@@ -31,7 +31,8 @@ public typealias AddressAttributes = String
 /// Assets as a nested object structure with policy IDs and asset names
 public typealias Assets = [String: [String: AssetQuantity]]
 
-/// A number of asset, can be negative when burning assets
+/// A signed number of an asset, negative when burning (the ledger's mint quantity, `Int64`).
+/// Output quantities are non-negative and use `UInt64` (see ``Value``).
 public typealias AssetQuantity = Int64
 
 /// Withdrawals as an object mapping stake addresses to Ada-only values

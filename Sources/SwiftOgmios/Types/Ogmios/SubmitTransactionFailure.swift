@@ -410,8 +410,8 @@ public struct SubmitTransactionFailureValueNotConserved: SubmitTransactionFailur
     public let data: ValueNotConservedData
     
     public struct ValueNotConservedData: JSONSerializable {
-        public let valueConsumed: Value
-        public let valueProduced: Value
+        public let valueConsumed: SignedValue
+        public let valueProduced: SignedValue
     }
     
     init(code: Int = 3123, message: String, data: ValueNotConservedData) {
@@ -548,7 +548,7 @@ public struct SubmitTransactionFailureInsufficientCollateral: SubmitTransactionF
     public let data: InsufficientCollateralData
     
     public struct InsufficientCollateralData: JSONSerializable {
-        public let providedCollateral: Value
+        public let providedCollateral: ValueDelta
         public let minimumRequiredCollateral: ValueAdaOnly
     }
     
@@ -665,7 +665,7 @@ public struct SubmitTransactionFailureTotalCollateralMismatch: SubmitTransaction
     
     public struct TotalCollateralMismatchData: JSONSerializable {
         public let declaredTotalCollateral: ValueAdaOnly
-        public let computedTotalCollateral: Value
+        public let computedTotalCollateral: ValueDelta
     }
     
     init(code: Int = 3135, message: String, data: TotalCollateralMismatchData) {
@@ -1107,8 +1107,8 @@ public struct SubmitTransactionFailureMintValueMismatch: SubmitTransactionFailur
     public let data: MintValueMismatchData
     
     public struct MintValueMismatchData: JSONSerializable {
-        public let mintedValue: Value
-        public let expectedValue: Value
+        public let mintedValue: SignedValue
+        public let expectedValue: SignedValue
     }
     
     init(code: Int = 3163, message: String, data: MintValueMismatchData) {
