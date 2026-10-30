@@ -131,16 +131,27 @@ public enum GovernanceAction: JSONSerializable {
         
         public struct Members: JSONSerializable {
             public let added: [ConstitutionalCommitteeMemberSummary]?
-            public let removed: [Members]?
+            public let removed: [RemovedMember]?
             
             public init(
                 added: [ConstitutionalCommitteeMemberSummary]? = nil,
-                removed: [Members]? = nil
+                removed: [RemovedMember]? = nil
             ) {
                 self.added = added
                 self.removed = removed
             }
             
+        }
+
+        /// A member the update removes: `{"id": <cold credential hash>, "from": "verificationKey" | "script"}`.
+        public struct RemovedMember: JSONSerializable {
+            public let id: DigestBlake2b224
+            public let from: CredentialOrigin
+
+            public init(id: DigestBlake2b224, from: CredentialOrigin) {
+                self.id = id
+                self.from = from
+            }
         }
         
         public init(
