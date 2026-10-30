@@ -1,12 +1,11 @@
 import Foundation
 
-/// An era bound which captures the time, slot and epoch at which the era start. The time is relative to the start time of the network.
+/// A pointer to an off-chain document: its URL and the hash of its content.
 public struct Anchor: JSONSerializable {
     public let hash: DigestAny
-    public let url: URL
+    /// The URL exactly as written on chain. The ledger accepts any text, and
+    /// the hash is checked against the document it names, so it is kept as
+    /// text rather than parsed into a Foundation `URL`, which would refuse
+    /// some and rewrite others.
+    public let url: String
 }
-
-
-
-
-

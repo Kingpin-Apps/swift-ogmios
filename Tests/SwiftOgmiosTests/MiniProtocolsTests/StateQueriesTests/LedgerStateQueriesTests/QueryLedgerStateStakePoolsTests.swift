@@ -40,7 +40,7 @@ import Testing
     #expect(firstPool?.owners.count == 1)
     #expect(firstPool?.relays.count == 1)
     #expect(firstPool?.metadata != nil)
-    #expect(firstPool?.metadata?.url.absoluteString == "https://example.com/pool-metadata.json")
+    #expect(firstPool?.metadata?.url == "https://example.com/pool-metadata.json")
     
     // Test second pool (without stake)
     let secondPoolId = try StakePoolId("pool1qzq896ke4meh0tn9fl0dcnvtn2rzdz75lk3h8nmsuew8z5uln7r")
