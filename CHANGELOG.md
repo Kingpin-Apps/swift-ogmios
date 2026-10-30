@@ -1,3 +1,15 @@
+## 0.4.0 (2026-10-30)
+
+### Feat
+
+- keep an anchor URL as the text written on chain
+- decode ledger numbers exactly
+
+### Fix
+
+- keep a removed committee member's credential
+- decode an abstain DRep as abstain
+
 ## 0.3.2 (2026-09-22)
 
 ### Fix
