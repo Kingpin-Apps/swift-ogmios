@@ -83,27 +83,29 @@ public enum DelegateRepresentativeSummary: JSONSerializable {
         }
     }
     
+    private enum TypeKey: String, CodingKey {
+        case type
+    }
+
     public init(from decoder: Decoder) throws {
+        // Dispatch on the `type` discriminator: the abstain and noConfidence
+        // payloads have identical shapes, so trial decoding cannot tell them apart.
+        let keyed = try decoder.container(keyedBy: TypeKey.self)
+        let type = try keyed.decode(String.self, forKey: .type)
         let container = try decoder.singleValueContainer()
-        if let registered = try? container.decode(Registered.self) {
-            self = .registered(registered)
-            return
-        }
-        else if let noConfidence = try? container.decode(NoConfidence.self) {
-            self = .noConfidence(noConfidence)
-            return
-        }
-        else if let abstain = try? container.decode(Abstain.self) {
-            self = .abstain(abstain)
-            return
-        } else {
-            throw DecodingError.typeMismatch(
-                DelegateRepresentativeSummary.self,
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "Unknown type for DelegateRepresentativeSummary"
+        switch type {
+            case "registered":
+                self = .registered(try container.decode(Registered.self))
+            case "noConfidence":
+                self = .noConfidence(try container.decode(NoConfidence.self))
+            case "abstain":
+                self = .abstain(try container.decode(Abstain.self))
+            default:
+                throw DecodingError.dataCorruptedError(
+                    forKey: .type,
+                    in: keyed,
+                    debugDescription: "Unknown type for DelegateRepresentativeSummary: \(type)"
                 )
-            )
         }
     }
     
