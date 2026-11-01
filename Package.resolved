@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kingpin-Apps/swift-cardano-core.git",
       "state" : {
-        "revision" : "806ee4d296621652f6543986c719eb3f20d72950",
-        "version" : "0.5.3"
+        "revision" : "d87009d79f50db04058d33f5d2dae49835f66248",
+        "version" : "0.10.0"
       }
     },
     {
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kingpin-Apps/swift-cbor-codable.git",
       "state" : {
-        "revision" : "e35f13077f893193fad30f869b28c372188398f3",
-        "version" : "0.3.3"
+        "revision" : "033d1cc3b0a055f28a65d4301d6aa751ec06fbd2",
+        "version" : "0.5.0"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Kingpin-Apps/swift-mnemonic.git",
       "state" : {
-        "revision" : "b5fea69fa51b83f53b28673de31b788a0f93eb4a",
-        "version" : "0.2.5"
+        "revision" : "7345f86daa9277b0510aaed9c5fd2fce5d41e89b",
+        "version" : "0.2.6"
       }
     },
     {
