@@ -1,3 +1,9 @@
+## 0.4.2 (2026-11-03)
+
+### Fix
+
+- raise watchOS and tvOS floors to what the code needs
+
 ## 0.4.1 (2026-11-01)
 
 ## 0.4.0 (2026-10-30)
